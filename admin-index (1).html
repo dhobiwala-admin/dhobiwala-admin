@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>DhobiWala — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--ink:#0a0a0f;--gold:#e8a020;--green:#16a34a;--red:#dc2626;--blue:#1d4ed8;--slate:#64748b;--border:#e8e4dc;--light:#f5f0e8;--cream:#faf8f3;--white:#fff;--navy:#0c1a2e}
+body{font-family:'DM Sans',sans-serif;background:#07090f;max-width:430px;margin:0 auto;min-height:100vh;color:var(--white)}
+.page{display:none;min-height:100vh;flex-direction:column}
+.page.show{display:flex}
+
+/* ── LOGIN ── */
+.login-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px}
+.login-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;color:var(--white);margin-bottom:6px;text-align:center}
+.login-mark span{color:var(--gold)}
+.login-badge{background:rgba(220,56,56,0.15);color:#ef4444;border-radius:20px;padding:4px 14px;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;margin-bottom:32px}
+.login-card{background:#0f1629;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px;width:100%}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:0.68rem;font-weight:700;color:var(--slate);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:7px}
+.finput{width:100%;padding:13px 16px;border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;font-size:0.92rem;font-family:'DM Sans',sans-serif;color:var(--white);background:rgba(255,255,255,0.06);outline:none}
+.finput:focus{border-color:var(--red)}
+.err-box{background:rgba(220,56,56,0.1);border:1px solid rgba(220,56,56,0.3);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#ef4444;margin-bottom:14px;display:none}
+.cta{width:100%;padding:14px;border:none;border-radius:12px;font-size:0.92rem;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer}
+.cta-red{background:linear-gradient(135deg,#ef4444,#dc2626);color:var(--white)}
+
+/* ── DASHBOARD HEADER ── */
+.dash-hdr{background:#0c1a2e;padding:18px 20px 20px}
+.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.dash-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--white)}
+.dash-mark span{color:var(--gold)}
+.dash-badge{background:rgba(239,68,68,0.15);color:#ef4444;border-radius:20px;padding:3px 12px;font-size:0.68rem;font-weight:700;letter-spacing:0.08em}
+.dash-welcome{color:rgba(255,255,255,0.4);font-size:0.78rem}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:14px 16px}
+.stat-card{background:#0f1629;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px}
+.stat-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.8rem;color:var(--white);margin-bottom:4px}
+.stat-val.gold{color:var(--gold)}
+.stat-val.green{color:#22c55e}
+.stat-val.red{color:#ef4444}
+.stat-val.blue{color:#60a5fa}
+.stat-lbl{font-size:0.72rem;color:var(--slate);font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
+.stat-sub{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:4px}
+
+/* ── TABS ── */
+.admin-tabs{display:flex;padding:0 16px;gap:0;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:0}
+.atab{flex:1;padding:10px 4px;border:none;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.72rem;color:var(--slate);background:transparent;cursor:pointer;text-align:center;white-space:nowrap}
+.atab.on{border-bottom-color:var(--gold);color:var(--white)}
+
+/* ── CONTENT ── */
+.content-wrap{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;padding-bottom:90px;overflow-y:auto}
+
+/* ── RIDER APPLICATION CARD ── */
+.rider-card{background:#0f1629;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px}
+.rider-card.pending-card{border-color:rgba(232,160,32,0.3)}
+.rider-card.approved-card{border-color:rgba(34,197,94,0.3)}
+.rider-card.rejected-card{border-color:rgba(220,56,56,0.3)}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.rc-ava{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--white);flex-shrink:0}
+.rc-name{font-family:'Syne',sans-serif;font-weight:700;color:var(--white);font-size:0.95rem;margin-bottom:2px}
+.rc-phone{font-size:0.75rem;color:var(--slate);margin-bottom:2px}
+.rc-time{font-size:0.7rem;color:rgba(255,255,255,0.25)}
+.rc-badge{border-radius:20px;padding:4px 12px;font-size:0.68rem;font-weight:700}
+.rb-pend{background:rgba(232,160,32,0.15);color:var(--gold)}
+.rb-appr{background:rgba(34,197,94,0.15);color:#22c55e}
+.rb-rej{background:rgba(220,56,56,0.15);color:#ef4444}
+.rc-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.rc-detail{background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 10px}
+.rc-dlbl{font-size:0.62rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px}
+.rc-dval{font-size:0.82rem;font-weight:600;color:var(--white)}
+.rc-btns{display:flex;gap:8px}
+.rc-approve{flex:1;padding:11px;background:#16a34a;color:var(--white);border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer}
+.rc-reject{flex:1;padding:11px;background:rgba(220,56,56,0.1);color:#ef4444;border:1px solid rgba(220,56,56,0.3);border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer}
+.rc-email{width:100%;padding:10px;background:rgba(29,78,216,0.15);color:#60a5fa;border:1px solid rgba(29,78,216,0.3);border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.82rem;cursor:pointer;text-align:center;text-decoration:none;display:block;margin-top:8px}
+.empty-state{text-align:center;padding:48px 20px;color:var(--slate)}
+.empty-ico{font-size:3rem;margin-bottom:12px}
+.empty-ttl{font-family:'Syne',sans-serif;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.empty-sub{font-size:0.82rem}
+
+/* ── VENDOR CARD ── */
+.vendor-card{background:#0f1629;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:16px}
+.vc-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.vc-ava{width:42px;height:42px;border-radius:10px;background:rgba(232,160,32,0.15);display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.vc-name{font-family:'Syne',sans-serif;font-weight:700;color:var(--white);font-size:0.9rem}
+.vc-area{font-size:0.72rem;color:var(--slate);margin-top:2px}
+.vc-status{margin-left:auto;font-size:0.72rem;font-weight:700}
+.vc-stats{display:flex;gap:10px;margin-bottom:10px}
+.vc-stat{background:rgba(255,255,255,0.04);border-radius:8px;padding:8px;flex:1;text-align:center}
+.vc-stat-val{font-family:'Syne',sans-serif;font-weight:700;color:var(--white);font-size:0.9rem}
+.vc-stat-lbl{font-size:0.6rem;color:var(--slate);margin-top:2px}
+.vc-action{width:100%;padding:9px;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer}
+
+/* ── ORDER ROW ── */
+.order-row{background:#0f1629;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px}
+.or-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.or-num{font-family:'Syne',sans-serif;font-weight:700;color:var(--white);font-size:0.88rem}
+.or-badge{border-radius:20px;padding:3px 10px;font-size:0.65rem;font-weight:700}
+.orb-pend{background:rgba(232,160,32,0.15);color:var(--gold)}
+.orb-active{background:rgba(29,78,216,0.15);color:#60a5fa}
+.orb-done{background:rgba(34,197,94,0.15);color:#22c55e}
+.or-detail{font-size:0.78rem;color:var(--slate);margin-bottom:4px}
+.or-footer{display:flex;justify-content:space-between;align-items:center}
+.or-amt{font-family:'Syne',sans-serif;font-weight:700;color:var(--white)}
+.or-time{font-size:0.7rem;color:rgba(255,255,255,0.25)}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#0f1629;border-top:1px solid rgba(255,255,255,0.06);display:flex;padding:10px 0 14px;z-index:20}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.bnav-ico{font-size:1.2rem}
+.bnav-lbl{font-size:0.58rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:0.04em}
+.bnav-item.on .bnav-lbl{color:var(--gold)}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal-box{background:#0f1629;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:430px}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--white);margin-bottom:6px}
+.modal-sub{font-size:0.78rem;color:var(--slate);margin-bottom:18px}
+.modal-ta{width:100%;padding:12px;border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--white);background:rgba(255,255,255,0.06);resize:none;height:80px;outline:none;margin-bottom:12px}
+.modal-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;margin-bottom:8px}
+.mb-red{background:var(--red);color:var(--white)}
+.mb-cancel{background:rgba(255,255,255,0.06);color:var(--slate);border:1px solid rgba(255,255,255,0.08)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:var(--ink);padding:11px 22px;border-radius:30px;font-size:0.82rem;font-weight:700;z-index:999;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div class="page show" id="pgLogin">
+  <div class="login-wrap">
+    <div class="login-mark">Dhobi<span>Wala</span></div>
+    <div class="login-badge">◆ ADMIN CONTROL PANEL</div>
+    <div class="login-card">
+      <div class="err-box" id="loginErr"></div>
+      <div class="field"><label>Admin Email</label><input class="finput" type="email" id="adminEmail" placeholder="admin@dhobiwala.in"/></div>
+      <div class="field"><label>Password</label><input class="finput" type="password" id="adminPass" placeholder="••••••••"/></div>
+      <button class="cta cta-red" onclick="doAdminLogin()">Access Admin Panel →</button>
+    </div>
+    <div style="margin-top:20px;font-size:0.72rem;color:rgba(255,255,255,0.2);text-align:center">Restricted access — authorised personnel only</div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="page" id="pgDash">
+  <div class="dash-hdr">
+    <div class="dash-top">
+      <div class="dash-mark">Dhobi<span>Wala</span></div>
+      <div class="dash-badge">ADMIN</div>
+    </div>
+    <div class="dash-welcome" id="adminWelcome">Good morning, Admin 👋</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-val gold" id="stRiders">0</div><div class="stat-lbl">Total Riders</div><div class="stat-sub" id="stRidersPend">0 pending approval</div></div>
+    <div class="stat-card"><div class="stat-val blue" id="stVendors">0</div><div class="stat-lbl">Total Vendors</div><div class="stat-sub">Active shops</div></div>
+    <div class="stat-card"><div class="stat-val green" id="stOrders">4</div><div class="stat-lbl">Total Orders</div><div class="stat-sub">All time</div></div>
+    <div class="stat-card"><div class="stat-val red" id="stPending">0</div><div class="stat-lbl">Pending Riders</div><div class="stat-sub">Awaiting approval</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="admin-tabs">
+    <button class="atab on" id="at-riders" onclick="filterAdmin('riders')">🏍 Riders</button>
+    <button class="atab" id="at-vendors" onclick="filterAdmin('vendors')">🏪 Vendors</button>
+    <button class="atab" id="at-orders" onclick="filterAdmin('orders')">📦 Orders</button>
+    <button class="atab" id="at-settings" onclick="filterAdmin('settings')">⚙️ Settings</button>
+  </div>
+
+  <div class="content-wrap" id="contentWrap"></div>
+
+  <div class="bnav">
+    <div class="bnav-item on" onclick="filterAdmin('riders')"><div class="bnav-ico">🏍</div><div class="bnav-lbl">Riders</div></div>
+    <div class="bnav-item" onclick="filterAdmin('vendors')"><div class="bnav-ico">🏪</div><div class="bnav-lbl">Vendors</div></div>
+    <div class="bnav-item" onclick="filterAdmin('orders')"><div class="bnav-ico">📦</div><div class="bnav-lbl">Orders</div></div>
+    <div class="bnav-item" onclick="doLogout()"><div class="bnav-ico">🚪</div><div class="bnav-lbl">Logout</div></div>
+  </div>
+</div>
+
+<!-- REJECT REASON MODAL -->
+<div class="modal-bg" id="rejectModal">
+  <div class="modal-box">
+    <div class="modal-title">❌ Reject Application</div>
+    <div class="modal-sub">Give a reason — rider will see this in their email</div>
+    <textarea class="modal-ta" id="rejectReason" placeholder="e.g. Area not covered yet, try again in 2 weeks..."></textarea>
+    <button class="modal-btn mb-red" onclick="confirmReject()">Reject Application</button>
+    <button class="modal-btn mb-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ── ADMIN CREDENTIALS ──
+var ADMIN_EMAIL = 'admin@dhobiwala.in';
+var ADMIN_PASS  = 'DhobiAdmin2026';
+
+// ── DEMO ORDERS ──
+var DEMO_ORDERS = [
+  {num:'#DW102401',cust:'Ramesh Panda',shop:'Civil Iron Palace',items:'3 Shirts, 2 Trousers',amt:170,status:'pending_vendor',time:'Just now'},
+  {num:'#DW102400',cust:'Priya Sahoo',shop:'Civil Iron Palace',items:'2 Sarees, 1 Kurta',amt:180,status:'pending_vendor',time:'5 min ago'},
+  {num:'#DW102398',cust:'Sunita Mishra',shop:'Rourkela Press',items:'1 Suit, 3 Shirts',amt:260,status:'ironing',time:'2 hrs ago'},
+  {num:'#DW102390',cust:'Anil Mohapatra',shop:'Civil Iron Palace',items:'4 Sarees',amt:180,status:'delivered',time:'Yesterday'},
+];
+
+var currentFilter = 'riders';
+var currentRejectId = null;
+
+// ── HELPERS ──
+function getRiders(){ try{ return JSON.parse(localStorage.getItem('dw_riders')||'{}'); }catch(e){ return {}; } }
+function saveRiders(r){ localStorage.setItem('dw_riders', JSON.stringify(r)); }
+function getVendors(){ try{ return JSON.parse(localStorage.getItem('dw_vendors')||'{}'); }catch(e){ return {}; } }
+function getRiderApps(){ try{ return JSON.parse(localStorage.getItem('dw_rider_apps')||'[]'); }catch(e){ return []; } }
+
+// ── LOGIN ──
+function doAdminLogin(){
+  var email = document.getElementById('adminEmail').value.trim();
+  var pass  = document.getElementById('adminPass').value.trim();
+  var err   = document.getElementById('loginErr');
+  if(!email||!pass){ err.textContent='Please enter email and password'; err.style.display='block'; return; }
+  if(email!==ADMIN_EMAIL||pass!==ADMIN_PASS){ err.textContent='Wrong credentials. Please try again.'; err.style.display='block'; return; }
+  localStorage.setItem('dw_admin_sess','1');
+  bootDash();
+}
+function doLogout(){ localStorage.removeItem('dw_admin_sess'); go('pgLogin'); }
+
+function bootDash(){
+  var h=new Date().getHours();
+  var g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('adminWelcome').textContent=g+', Admin 👋';
+  updateStats();
+  filterAdmin('riders');
+  go('pgDash');
+}
+
+// ── NAV ──
+function go(pgId){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('show');});
+  document.getElementById(pgId).classList.add('show');
+  window.scrollTo(0,0);
+}
+
+function filterAdmin(f){
+  currentFilter=f;
+  ['riders','vendors','orders','settings'].forEach(function(t){
+    var el=document.getElementById('at-'+t);
+    if(el) el.className='atab'+(f===t?' on':'');
+  });
+  // Update bottom nav
+  document.querySelectorAll('.bnav-item').forEach(function(b){b.classList.remove('on');});
+  if(f==='riders') document.querySelectorAll('.bnav-item')[0].classList.add('on');
+  else if(f==='vendors') document.querySelectorAll('.bnav-item')[1].classList.add('on');
+  else if(f==='orders') document.querySelectorAll('.bnav-item')[2].classList.add('on');
+  renderContent(f);
+}
+
+// ── STATS ──
+function updateStats(){
+  var riders=getRiders();
+  var vendors=getVendors();
+  var riderList=Object.values(riders);
+  var pendingRiders=riderList.filter(function(r){return !r.approved;});
+  document.getElementById('stRiders').textContent=riderList.length;
+  document.getElementById('stRidersPend').textContent=pendingRiders.length+' pending approval';
+  document.getElementById('stVendors').textContent=Object.keys(vendors).length;
+  document.getElementById('stPending').textContent=pendingRiders.length;
+}
+
+// ── RENDER CONTENT ──
+function renderContent(f){
+  var wrap=document.getElementById('contentWrap');
+  if(f==='riders') renderRiders(wrap);
+  else if(f==='vendors') renderVendors(wrap);
+  else if(f==='orders') renderOrders(wrap);
+  else if(f==='settings') renderSettings(wrap);
+}
+
+// ── RIDERS ──
+function renderRiders(wrap){
+  var riders=getRiders();
+  var list=Object.values(riders);
+  var pending=list.filter(function(r){return !r.approved&&!r.rejected;});
+  var approved=list.filter(function(r){return r.approved;});
+  var rejected=list.filter(function(r){return r.rejected;});
+
+  if(list.length===0){
+    wrap.innerHTML='<div class="empty-state"><div class="empty-ico">🏍</div><div class="empty-ttl">No rider applications yet</div><div class="empty-sub">Share dhobiwala-delivery.vercel.app to get riders</div></div>';
+    return;
+  }
+
+  var html='';
+  if(pending.length>0){
+    html+='<div style="font-size:0.72rem;font-weight:700;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px">⏳ Pending Approval ('+pending.length+')</div>';
+    html+=pending.map(function(r){ return riderCardHtml(r,'pending'); }).join('');
+  }
+  if(approved.length>0){
+    html+='<div style="font-size:0.72rem;font-weight:700;color:#22c55e;letter-spacing:0.1em;text-transform:uppercase;margin:14px 0 10px">✅ Approved Riders ('+approved.length+')</div>';
+    html+=approved.map(function(r){ return riderCardHtml(r,'approved'); }).join('');
+  }
+  if(rejected.length>0){
+    html+='<div style="font-size:0.72rem;font-weight:700;color:#ef4444;letter-spacing:0.1em;text-transform:uppercase;margin:14px 0 10px">❌ Rejected ('+rejected.length+')</div>';
+    html+=rejected.map(function(r){ return riderCardHtml(r,'rejected'); }).join('');
+  }
+  wrap.innerHTML=html;
+}
+
+function riderCardHtml(r, status){
+  var borderClass = status==='pending'?'pending-card':status==='approved'?'approved-card':'rejected-card';
+  var badgeClass  = status==='pending'?'rb-pend':status==='approved'?'rb-appr':'rb-rej';
+  var badgeLabel  = status==='pending'?'⏳ Pending':status==='approved'?'✅ Approved':'❌ Rejected';
+  var appliedAt   = r.appliedAt ? new Date(r.appliedAt).toLocaleDateString('en-IN') : 'Recently';
+  var approvedAt  = r.approvedAt ? new Date(r.approvedAt).toLocaleDateString('en-IN') : '';
+
+  var actionBtns = '';
+  if(status==='pending'){
+    actionBtns = '<div class="rc-btns"><button class="rc-approve" onclick="approveRider(\''+r.phone+'\')">✅ Approve</button><button class="rc-reject" onclick="openRejectModal(\''+r.phone+'\')">❌ Reject</button></div>';
+    actionBtns += '<a class="rc-email" href="mailto:'+r.phone+'@dhobiwala.in?subject=DhobiWala Rider Application&body=Hi '+r.name+', your application is under review. We will get back to you soon.">📧 Send Email Update</a>';
+  } else if(status==='approved'){
+    actionBtns = '<div style="display:flex;gap:8px"><button class="rc-reject" onclick="revokeRider(\''+r.phone+'\')">🚫 Revoke Access</button><a class="rc-email" style="flex:1;display:flex;align-items:center;justify-content:center" href="mailto:'+r.phone+'@dhobiwala.in?subject=DhobiWala Rider Update">📧 Email Rider</a></div>';
+  }
+
+  return '<div class="rider-card '+borderClass+'" style="margin-bottom:12px">'+
+    '<div class="rc-top">'+
+      '<div style="display:flex;align-items:center;gap:10px">'+
+        '<div class="rc-ava">'+r.name[0].toUpperCase()+'</div>'+
+        '<div><div class="rc-name">'+r.name+'</div><div class="rc-phone">+91 '+r.phone+'</div><div class="rc-time">Applied: '+appliedAt+(approvedAt?' · Approved: '+approvedAt:'')+'</div></div>'+
+      '</div>'+
+      '<span class="rc-badge '+badgeClass+'">'+badgeLabel+'</span>'+
+    '</div>'+
+    '<div class="rc-details">'+
+      '<div class="rc-detail"><div class="rc-dlbl">Vehicle</div><div class="rc-dval">'+r.vehicle+'</div></div>'+
+      '<div class="rc-detail"><div class="rc-dlbl">Area</div><div class="rc-dval">'+r.area+'</div></div>'+
+    '</div>'+
+    actionBtns+
+  '</div>';
+}
+
+function approveRider(phone){
+  var riders=getRiders();
+  if(!riders[phone]) return;
+  riders[phone].approved=true;
+  riders[phone].rejected=false;
+  riders[phone].approvedAt=new Date().toISOString();
+  saveRiders(riders);
+  updateStats();
+  renderRiders(document.getElementById('contentWrap'));
+  toast('✅ Rider approved! They can now login.');
+  // Show email reminder
+  setTimeout(function(){
+    toast('📧 Send login details to rider via email!');
+  }, 2000);
+}
+
+function openRejectModal(phone){
+  currentRejectId=phone;
+  document.getElementById('rejectReason').value='';
+  document.getElementById('rejectModal').classList.add('open');
+}
+function confirmReject(){
+  if(!currentRejectId) return;
+  var riders=getRiders();
+  if(!riders[currentRejectId]) return;
+  riders[currentRejectId].rejected=true;
+  riders[currentRejectId].approved=false;
+  riders[currentRejectId].rejectedReason=document.getElementById('rejectReason').value||'Application not accepted at this time';
+  saveRiders(riders);
+  closeModal();
+  updateStats();
+  renderRiders(document.getElementById('contentWrap'));
+  toast('Application rejected.');
+}
+function revokeRider(phone){
+  if(!confirm('Revoke access for this rider?')) return;
+  var riders=getRiders();
+  if(!riders[phone]) return;
+  riders[phone].approved=false;
+  riders[phone].revoked=true;
+  saveRiders(riders);
+  updateStats();
+  renderRiders(document.getElementById('contentWrap'));
+  toast('🚫 Rider access revoked.');
+}
+function closeModal(){ document.getElementById('rejectModal').classList.remove('open'); }
+
+// ── VENDORS ──
+function renderVendors(wrap){
+  var vendors=getVendors();
+  var list=Object.values(vendors);
+  if(list.length===0){
+    wrap.innerHTML='<div class="empty-state"><div class="empty-ico">🏪</div><div class="empty-ttl">No vendors registered yet</div><div class="empty-sub">Share dhobiwala-vendor.vercel.app to get vendors</div></div>';
+    return;
+  }
+  wrap.innerHTML=list.map(function(v){
+    return '<div class="vendor-card" style="margin-bottom:12px">'+
+      '<div class="vc-top">'+
+        '<div class="vc-ava">🏪</div>'+
+        '<div><div class="vc-name">'+v.shopName+'</div><div class="vc-area">'+v.ownerName+' · '+(v.area||'Rourkela')+'</div></div>'+
+        '<div class="vc-status" style="color:#22c55e">🟢 Active</div>'+
+      '</div>'+
+      '<div class="vc-stats">'+
+        '<div class="vc-stat"><div class="vc-stat-val">+91 '+v.phone+'</div><div class="vc-stat-lbl">Phone</div></div>'+
+        '<div class="vc-stat"><div class="vc-stat-val">08:00–21:00</div><div class="vc-stat-lbl">Hours</div></div>'+
+      '</div>'+
+      '<a href="mailto:'+v.phone+'@dhobiwala.in" class="vc-action" style="display:block;text-align:center;text-decoration:none;color:rgba(255,255,255,0.6)">📧 Contact Vendor</a>'+
+    '</div>';
+  }).join('');
+}
+
+// ── ORDERS ──
+function renderOrders(wrap){
+  wrap.innerHTML='<div style="font-size:0.72rem;font-weight:700;color:var(--slate);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px">All Orders</div>'+
+    DEMO_ORDERS.map(function(o){
+      var bClass=o.status==='pending_vendor'?'orb-pend':o.status==='delivered'?'orb-done':'orb-active';
+      var bLabel=o.status==='pending_vendor'?'⏳ Pending':o.status==='delivered'?'✅ Delivered':'⚡ Active';
+      return '<div class="order-row" style="margin-bottom:10px">'+
+        '<div class="or-top"><div class="or-num">'+o.num+'</div><span class="or-badge '+bClass+'">'+bLabel+'</span></div>'+
+        '<div class="or-detail">👤 '+o.cust+' · 🏪 '+o.shop+'</div>'+
+        '<div class="or-detail">🧺 '+o.items+'</div>'+
+        '<div class="or-footer"><div class="or-amt">₹'+o.amt+'</div><div class="or-time">'+o.time+'</div></div>'+
+      '</div>';
+    }).join('');
+}
+
+// ── SETTINGS ──
+function renderSettings(wrap){
+  wrap.innerHTML='<div class="vendor-card">'+
+    '<div style="font-family:Syne,sans-serif;font-weight:700;color:var(--white);margin-bottom:16px">⚙️ Admin Settings</div>'+
+    '<div style="font-size:0.72rem;color:var(--slate);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Notification Email</div>'+
+    '<div style="font-weight:600;color:var(--white);margin-bottom:16px">admin@dhobiwala.in</div>'+
+    '<div style="font-size:0.72rem;color:var(--slate);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Support Emails</div>'+
+    '<div style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.8">'+
+      'Customer: support@dhobiwala.in<br/>'+
+      'Vendor: vendors@dhobiwala.in<br/>'+
+      'Rider: riders@dhobiwala.in<br/>'+
+      'Payments: payments@dhobiwala.in<br/>'+
+      'Refunds: refund@dhobiwala.in'+
+    '</div>'+
+    '<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:16px;padding-top:16px">'+
+      '<div style="font-size:0.72rem;color:var(--slate);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em">Platform URLs</div>'+
+      '<div style="font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:2">'+
+        'Customer: dhobiwala-customer.vercel.app<br/>'+
+        'Vendor: dhobiwala-vendor.vercel.app<br/>'+
+        'Rider: dhobiwala-delivery.vercel.app<br/>'+
+        'Backend: dhobiwala-backend.onrender.com'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+  '<div class="vendor-card" style="margin-top:12px">'+
+    '<div style="font-family:Syne,sans-serif;font-weight:700;color:var(--white);margin-bottom:16px">📊 Platform Stats</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+      '<div class="vc-stat"><div class="vc-stat-val" style="color:var(--gold)">₹0</div><div class="vc-stat-lbl">Total Revenue</div></div>'+
+      '<div class="vc-stat"><div class="vc-stat-val" style="color:#22c55e">4</div><div class="vc-stat-lbl">Total Orders</div></div>'+
+      '<div class="vc-stat"><div class="vc-stat-val">0</div><div class="vc-stat-lbl">Active Riders</div></div>'+
+      '<div class="vc-stat"><div class="vc-stat-val">0</div><div class="vc-stat-lbl">Active Vendors</div></div>'+
+    '</div>'+
+  '</div>';
+}
+
+// ── TOAST ──
+function toast(msg){
+  var el=document.getElementById('toastEl');
+  el.textContent=msg; el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},2600);
+}
+
+// ── BOOT ──
+(function(){
+  if(localStorage.getItem('dw_admin_sess')==='1'){
+    bootDash();
+  }
+})();
+</script>
+</body>
+</html>
