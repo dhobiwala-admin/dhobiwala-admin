@@ -11,8 +11,6 @@
 body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;margin:0 auto;min-height:100vh}
 .page{display:none;min-height:100vh;flex-direction:column}
 .page.show{display:flex}
-
-/* AUTH */
 .auth-wrap{background:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center}
 .auth-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;color:#fff;margin-bottom:6px}
 .auth-logo span{color:var(--gold)}
@@ -26,31 +24,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 .auth-btn:disabled{opacity:0.6;cursor:not-allowed}
 .auth-err{background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#fca5a5;margin-bottom:14px;display:none;text-align:left}
 .auth-restrict{font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:8px}
-
-/* HEADER */
 .dash-header{background:var(--ink);padding:18px 20px}
 .dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
 .dash-mark{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:#fff}
 .dash-mark span{color:var(--gold)}
 .admin-badge{background:rgba(232,160,32,0.15);border:1px solid rgba(232,160,32,0.3);border-radius:20px;padding:3px 12px;font-size:0.65rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase}
 .dash-greet{color:rgba(255,255,255,0.45);font-size:0.78rem}
-
-/* NAV TABS */
 .nav-tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
 .nav-tabs::-webkit-scrollbar{display:none}
 .nav-tab{flex:1;min-width:70px;padding:12px 8px;border:none;border-bottom:3px solid transparent;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.72rem;color:var(--slate);background:transparent;cursor:pointer;text-align:center;white-space:nowrap}
 .nav-tab.on{border-bottom-color:var(--gold);color:var(--ink);font-weight:700}
-
-/* SECTION */
 .section{display:none;padding:14px 16px;padding-bottom:90px}
 .section.show{display:block}
-
-/* CARDS */
 .card{background:var(--white);border-radius:16px;padding:18px;margin-bottom:12px;border:1px solid var(--border)}
 .card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
 .card-title span{font-size:0.72rem;font-weight:500;color:var(--slate)}
-
-/* STATS GRID */
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .stats-grid.four{grid-template-columns:1fr 1fr 1fr 1fr}
 .stat-box{background:var(--white);border-radius:14px;padding:14px;border:1px solid var(--border);text-align:center}
@@ -60,20 +48,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 .stat-val.blue{color:var(--blue)}
 .stat-val.purple{color:var(--purple)}
 .stat-lbl{font-size:0.62rem;color:var(--slate);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em}
-
-/* PERIOD TABS */
 .period-tabs{display:flex;background:var(--light);border-radius:10px;padding:3px;margin-bottom:14px;gap:2px}
 .period-tab{flex:1;padding:7px 4px;border:none;border-radius:8px;font-size:0.72rem;font-weight:600;cursor:pointer;background:transparent;color:var(--slate);font-family:'DM Sans',sans-serif}
 .period-tab.on{background:var(--ink);color:#fff}
-
-/* BAR CHART */
 .bar-chart{display:flex;align-items:flex-end;gap:4px;height:100px;margin:12px 0 6px}
 .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
 .bar-fill{width:100%;border-radius:4px 4px 0 0;min-height:3px;transition:height 0.4s}
 .bar-lbl{font-size:0.58rem;color:var(--slate);font-weight:600}
 .bar-amt{font-size:0.6rem;font-weight:700;color:var(--ink)}
-
-/* TABLE */
 .data-table{width:100%;border-collapse:collapse}
 .data-table th{font-size:0.65rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:0.06em;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
 .data-table td{font-size:0.8rem;color:var(--ink);padding:10px 8px;border-bottom:1px solid #f5f0e8}
@@ -81,25 +63,20 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 .data-table .amt{font-family:'Syne',sans-serif;font-weight:700}
 .data-table .platform{color:var(--gold);font-weight:700}
 .data-table .vendor{color:var(--green)}
-
-/* BADGES */
 .badge{border-radius:20px;padding:3px 10px;font-size:0.65rem;font-weight:700}
 .b-delivered{background:#f0fdf4;color:var(--green)}
 .b-pending{background:#fef9ec;color:#b45309}
 .b-rejected{background:#fee2e2;color:var(--red)}
-
-/* RIDER / VENDOR CARDS */
 .rcard{background:var(--white);border-radius:14px;padding:14px;border:1px solid var(--border);margin-bottom:10px}
 .rcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .rcard-name{font-family:'Syne',sans-serif;font-weight:700;color:var(--ink);font-size:0.9rem}
 .rcard-sub{font-size:0.72rem;color:var(--slate);margin-top:2px}
 .rcard-btns{display:flex;gap:6px;margin-top:10px}
-.rbtn{flex:1;padding:9px;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer}
+.rbtn{flex:1;padding:9px;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;transition:opacity 0.2s}
+.rbtn:disabled{opacity:0.6;cursor:not-allowed}
 .rbtn-approve{background:var(--green);color:#fff}
 .rbtn-reject{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
 .rbtn-revoke{background:var(--light);color:var(--slate);border:1px solid var(--border)}
-
-/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
 .modal-bg.open{display:flex}
 .modal-box{background:#fff;border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:430px}
@@ -109,15 +86,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 .modal-btn{width:100%;padding:13px;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.88rem;cursor:pointer;margin-bottom:8px}
 .modal-btn.danger{background:var(--red);color:#fff}
 .modal-btn.ghost{background:var(--light);color:var(--slate)}
-
-/* BOTTOM NAV */
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--white);border-top:1px solid var(--border);display:flex;padding:10px 0 14px;z-index:20}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
 .bnav-ico{font-size:1.2rem}
 .bnav-lbl{font-size:0.58rem;font-weight:700;color:var(--slate);text-transform:uppercase}
 .bnav-item.on .bnav-lbl{color:var(--ink)}
-
-/* TOAST */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 22px;border-radius:30px;font-size:0.82rem;font-weight:600;z-index:999;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .empty{text-align:center;padding:30px;color:var(--slate);font-size:0.85rem}
@@ -149,8 +122,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     </div>
     <div class="dash-greet" id="dashGreet">Good morning, Admin 👋</div>
   </div>
-
-  <!-- NAV TABS -->
   <div class="nav-tabs">
     <button class="nav-tab on" onclick="showSection('secAnalytics',this)">📊 Analytics</button>
     <button class="nav-tab" onclick="showSection('secOrders',this)">📦 Orders</button>
@@ -159,12 +130,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     <button class="nav-tab" onclick="showSection('secCustomers',this)">👤 Customers</button>
   </div>
 
-  <!-- ANALYTICS SECTION -->
+  <!-- ANALYTICS -->
   <div class="section show" id="secAnalytics">
-
-    <!-- PLATFORM EARNINGS -->
     <div class="card">
-      <div class="card-title">💰 DhobiWala Earnings <span id="platformPeriodLbl">This Week</span></div>
+      <div class="card-title">💰 DhobiWala Earnings <span id="platformPeriodLbl">Last 24 Hours</span></div>
       <div class="period-tabs">
         <button class="period-tab on" onclick="setPeriod('platform','hourly',this)">Hourly</button>
         <button class="period-tab" onclick="setPeriod('platform','daily',this)">Daily</button>
@@ -181,39 +150,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
       <div class="bar-chart" id="platformChart"></div>
       <div style="display:flex;justify-content:space-between;font-size:0.6rem;color:var(--slate)" id="platformChartLabels"></div>
     </div>
-
-    <!-- VENDOR EARNINGS OVERVIEW -->
     <div class="card">
-      <div class="card-title">🏪 Vendor Earnings <span id="vendorPeriodLbl">This Week</span></div>
+      <div class="card-title">🏪 Vendor Earnings <span id="vendorPeriodLbl">Today</span></div>
       <div class="period-tabs">
         <button class="period-tab on" onclick="setPeriod('vendor','daily',this)">Daily</button>
         <button class="period-tab" onclick="setPeriod('vendor','weekly',this)">Weekly</button>
         <button class="period-tab" onclick="setPeriod('vendor','monthly',this)">Monthly</button>
         <button class="period-tab" onclick="setPeriod('vendor','yearly',this)">Yearly</button>
       </div>
-      <div id="vendorEarningsTable"><div class="empty">Loading...</div></div>
+      <div id="vendorEarningsTable"><div class="empty">No data yet</div></div>
     </div>
-
-    <!-- CUSTOMER SPENDING OVERVIEW -->
     <div class="card">
       <div class="card-title">👤 Customer Spending <span id="custPeriodLbl">This Week</span></div>
       <div class="period-tabs">
         <button class="period-tab on" onclick="setPeriod('customer','weekly',this)">Weekly</button>
         <button class="period-tab" onclick="setPeriod('customer','monthly',this)">Monthly</button>
       </div>
-      <div id="customerSpendingTable"><div class="empty">Loading...</div></div>
+      <div id="customerSpendingTable"><div class="empty">No data yet</div></div>
     </div>
-
-    <!-- SUMMARY ROW -->
     <div class="stats-grid">
-      <div class="stat-box"><div class="stat-val green" id="totalVendorPayout">₹0</div><div class="stat-lbl">Total Vendor Payout</div></div>
-      <div class="stat-box"><div class="stat-val gold" id="totalPlatformEarning">₹0</div><div class="stat-lbl">Platform Earned (15%)</div></div>
-      <div class="stat-box"><div class="stat-val blue" id="totalCustomerSpend">₹0</div><div class="stat-lbl">Total Customer Spend</div></div>
+      <div class="stat-box"><div class="stat-val green" id="totalVendorPayout">₹0</div><div class="stat-lbl">Vendor Payouts</div></div>
+      <div class="stat-box"><div class="stat-val gold" id="totalPlatformEarning">₹0</div><div class="stat-lbl">Platform (15%)</div></div>
+      <div class="stat-box"><div class="stat-val blue" id="totalCustomerSpend">₹0</div><div class="stat-lbl">Customer Spend</div></div>
       <div class="stat-box"><div class="stat-val" id="totalOrderCount">0</div><div class="stat-lbl">Total Orders</div></div>
     </div>
   </div>
 
-  <!-- ORDERS SECTION -->
+  <!-- ORDERS -->
   <div class="section" id="secOrders">
     <div class="period-tabs" style="margin-bottom:12px">
       <button class="period-tab on" onclick="filterOrdersAdmin('all',this)">All</button>
@@ -224,12 +187,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     <div id="adminOrdersList"><div class="empty">Loading orders...</div></div>
   </div>
 
-  <!-- VENDORS SECTION -->
+  <!-- VENDORS -->
   <div class="section" id="secVendors">
     <div id="vendorsList"><div class="empty">Loading vendors...</div></div>
   </div>
 
-  <!-- RIDERS SECTION -->
+  <!-- RIDERS -->
   <div class="section" id="secRiders">
     <div class="period-tabs" style="margin-bottom:12px">
       <button class="period-tab on" onclick="filterRiders('all',this)">All</button>
@@ -239,7 +202,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     <div id="ridersList"><div class="empty">Loading riders...</div></div>
   </div>
 
-  <!-- CUSTOMERS SECTION -->
+  <!-- CUSTOMERS -->
   <div class="section" id="secCustomers">
     <div id="customersList"><div class="empty">Loading customers...</div></div>
   </div>
@@ -267,31 +230,44 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 <div class="toast" id="toastEl"></div>
 
 <script>
-var API = 'https://dhobiwala-backend.onrender.com';
-var COMMISSION = 0.15; // 15% platform commission
-var adminToken = null;
-var allOrders = [], allRiders = [], allVendors = [], allCustomers = [];
-var currentRiderFilter = 'all', currentOrderFilter = 'all';
-var currentRejectId = null;
-var periods = { platform: 'hourly', vendor: 'daily', customer: 'weekly' };
+// ─── CONFIG ────────────────────────────────────────────────────────────────
+var API        = 'https://dhobiwala-backend.onrender.com';
+var COMMISSION = 0.15;
 
-// ─── AUTH ─────────────────────────────────────────
+// ─── STATE ─────────────────────────────────────────────────────────────────
+var adminToken         = null;
+var allOrders          = [];
+var allRiders          = [];
+var allVendors         = [];
+var allCustomers       = [];
+var currentRiderFilter = 'all';
+var currentOrderFilter = 'all';
+var currentRejectId    = null;
+var periods            = { platform:'hourly', vendor:'daily', customer:'weekly' };
+
+// ─── AUTH ──────────────────────────────────────────────────────────────────
+function showAuthErr(m) {
+  var e = document.getElementById('authErr');
+  e.textContent = m;
+  e.style.display = 'block';
+}
+
 function doLogin() {
   var email = document.getElementById('aEmail').value.trim();
   var pass  = document.getElementById('aPass').value.trim();
   if (!email || !pass) { showAuthErr('Please enter email and password'); return; }
   var btn = document.getElementById('btnLogin');
   btn.disabled = true; btn.textContent = 'Logging in…';
-  fetch(API + '/api/admin/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, password: pass })
+  fetch(API+'/api/admin/login', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ email:email, password:pass })
   })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
+  .then(function(d) {
     btn.disabled = false; btn.textContent = 'Access Admin Panel →';
-    if (!data.success) { showAuthErr(data.message || 'Invalid credentials'); return; }
-    adminToken = data.token;
+    if (!d.success) { showAuthErr(d.message||'Invalid credentials'); return; }
+    adminToken = d.token;
     localStorage.setItem('dw_admin_token', adminToken);
     bootDash();
   })
@@ -301,20 +277,19 @@ function doLogin() {
   });
 }
 
-function showAuthErr(m) { var e = document.getElementById('authErr'); e.textContent = m; e.style.display = 'block'; }
-
 function doLogout() {
   localStorage.removeItem('dw_admin_token');
   adminToken = null;
+  allOrders = []; allRiders = []; allVendors = []; allCustomers = [];
   document.getElementById('pgDash').classList.remove('show');
   document.getElementById('pgAuth').classList.add('show');
 }
 
-// ─── BOOT ─────────────────────────────────────────
+// ─── BOOT ──────────────────────────────────────────────────────────────────
 function bootDash() {
   var h = new Date().getHours();
   var g = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  document.getElementById('dashGreet').textContent = g + ', Admin 👋';
+  document.getElementById('dashGreet').textContent = g+', Admin 👋';
   document.getElementById('pgAuth').classList.remove('show');
   document.getElementById('pgDash').classList.add('show');
   loadAllData();
@@ -327,52 +302,63 @@ function loadAllData() {
   loadCustomers();
 }
 
-// ─── LOAD DATA ────────────────────────────────────
-function authHeader() { return { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' }; }
+function authHeader() {
+  return { 'Authorization':'Bearer '+adminToken, 'Content-Type':'application/json' };
+}
 
+// ─── LOAD DATA ─────────────────────────────────────────────────────────────
 function loadOrders() {
-  fetch(API + '/api/orders', { headers: authHeader() })
+  fetch(API+'/api/orders', { headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
-    allOrders = (data.success && data.orders) ? data.orders : [];
+  .then(function(d) {
+    allOrders = (d.success && d.orders) ? d.orders : [];
     renderAnalytics();
     renderOrders();
   }).catch(function(){ allOrders = []; });
 }
 
 function loadRiders() {
-  fetch(API + '/api/riders', { headers: authHeader() })
+  fetch(API+'/api/riders', { headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
-    allRiders = (data.success && data.riders) ? data.riders : [];
+  .then(function(d) {
+    allRiders = (d.success && d.riders) ? d.riders : [];
     renderRiders();
   }).catch(function(){ allRiders = []; });
 }
 
 function loadVendors() {
-  fetch(API + '/api/shops', { headers: authHeader() })
+  fetch(API+'/api/shops', { headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
-    allVendors = (data.success && data.shops) ? data.shops : [];
+  .then(function(d) {
+    allVendors = (d.success && d.shops) ? d.shops : [];
     renderVendors();
   }).catch(function(){ allVendors = []; });
 }
 
 function loadCustomers() {
-  fetch(API + '/api/auth/users', { headers: authHeader() })
+  fetch(API+'/api/auth/users', { headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data) {
-    allCustomers = (data.success && data.users) ? data.users.filter(function(u){ return u.role === 'customer'; }) : [];
+  .then(function(d) {
+    allCustomers = (d.success && d.users)
+      ? d.users.filter(function(u){ return u.role==='customer'; })
+      : [];
     renderCustomers();
   }).catch(function(){ allCustomers = []; });
 }
 
-// ─── PERIOD FILTER ────────────────────────────────
+// ─── PERIOD FILTER ─────────────────────────────────────────────────────────
+var periodLabels = {
+  hourly:'Last 24 Hours', daily:'Today',
+  weekly:'This Week', monthly:'This Month', yearly:'This Year'
+};
+var periodLblIds = {
+  platform:'platformPeriodLbl', vendor:'vendorPeriodLbl', customer:'custPeriodLbl'
+};
+
 function setPeriod(type, period, btn) {
   periods[type] = period;
-  var labels = { hourly:'Last 24 Hours', daily:'Today', weekly:'This Week', monthly:'This Month', yearly:'This Year' };
-  var lblMap = { platform:'platformPeriodLbl', vendor:'vendorPeriodLbl', customer:'custPeriodLbl' };
-  if (lblMap[type]) document.getElementById(lblMap[type]).textContent = labels[period] || period;
+  var lblEl = document.getElementById(periodLblIds[type]);
+  if (lblEl) lblEl.textContent = periodLabels[period] || period;
   btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); });
   btn.classList.add('on');
   renderAnalytics();
@@ -381,117 +367,135 @@ function setPeriod(type, period, btn) {
 function filterByPeriod(orders, period) {
   var now = new Date();
   return orders.filter(function(o) {
+    if (!o.createdAt) return false;
     var d = new Date(o.createdAt);
-    if (period === 'hourly') return (now - d) < 24*3600*1000;
-    if (period === 'daily')  return d.toDateString() === now.toDateString();
-    if (period === 'weekly') {
-      var wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay());
-      wStart.setHours(0,0,0,0); return d >= wStart;
+    if (period === 'hourly') {
+      return (now - d) < 24*3600*1000;
     }
-    if (period === 'monthly') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    if (period === 'yearly')  return d.getFullYear() === now.getFullYear();
+    if (period === 'daily') {
+      return d.toDateString() === now.toDateString();
+    }
+    if (period === 'weekly') {
+      var wStart = new Date(now);
+      wStart.setDate(now.getDate() - now.getDay());
+      wStart.setHours(0,0,0,0);
+      return d >= wStart;
+    }
+    if (period === 'monthly') {
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }
+    if (period === 'yearly') {
+      return d.getFullYear() === now.getFullYear();
+    }
     return true;
   });
 }
 
-// ─── ANALYTICS ────────────────────────────────────
+// ─── ANALYTICS ─────────────────────────────────────────────────────────────
 function renderAnalytics() {
-  var delivered = allOrders.filter(function(o){ return o.status === 'delivered'; });
+  var delivered = allOrders.filter(function(o){ return o.status==='delivered'; });
 
-  // Platform earnings
-  var platOrders  = filterByPeriod(delivered, periods.platform);
+  // Platform earnings for selected period
+  var platOrders     = filterByPeriod(delivered, periods.platform);
   var platCommission = platOrders.reduce(function(a,o){
     return a + Math.round((o.totalAmount||o.subtotal||0) * COMMISSION);
   }, 0);
-  var platDelivery = platOrders.length * 30;
-  var platTotal    = platCommission + platDelivery;
-  document.getElementById('plat15pct').textContent   = '₹' + platCommission;
-  document.getElementById('platDelivery').textContent = '₹' + platDelivery;
-  document.getElementById('platOrders').textContent   = platOrders.length;
-  document.getElementById('platTotal').textContent    = '₹' + platTotal;
+  var platDelivery   = platOrders.length * 30;
+  var platTotal      = platCommission + platDelivery;
 
-  // Platform bar chart
+  document.getElementById('plat15pct').textContent    = '₹'+platCommission;
+  document.getElementById('platDelivery').textContent  = '₹'+platDelivery;
+  document.getElementById('platOrders').textContent    = platOrders.length;
+  document.getElementById('platTotal').textContent     = '₹'+platTotal;
+
   renderPlatformChart(delivered, periods.platform);
-
-  // Vendor earnings table
   renderVendorEarnings(filterByPeriod(delivered, periods.vendor));
-
-  // Customer spending table
   renderCustomerSpending(filterByPeriod(allOrders, periods.customer));
 
-  // Summary totals (all time)
-  var totalVendor   = delivered.reduce(function(a,o){ return a + Math.round((o.totalAmount||o.subtotal||0) * 0.85); }, 0);
-  var totalPlatform = delivered.reduce(function(a,o){ return a + Math.round((o.totalAmount||o.subtotal||0) * COMMISSION); }, 0);
-  var totalCustomer = allOrders.reduce(function(a,o){ return a + (o.totalAmount||o.subtotal||0); }, 0);
-  document.getElementById('totalVendorPayout').textContent    = '₹' + totalVendor;
-  document.getElementById('totalPlatformEarning').textContent = '₹' + totalPlatform;
-  document.getElementById('totalCustomerSpend').textContent   = '₹' + totalCustomer;
+  // All-time summary
+  var totalVendor   = delivered.reduce(function(a,o){ return a+Math.round((o.totalAmount||o.subtotal||0)*0.85); }, 0);
+  var totalPlatform = delivered.reduce(function(a,o){ return a+Math.round((o.totalAmount||o.subtotal||0)*COMMISSION); }, 0);
+  var totalCustomer = allOrders.reduce(function(a,o){ return a+(o.totalAmount||o.subtotal||0); }, 0);
+
+  document.getElementById('totalVendorPayout').textContent    = '₹'+totalVendor;
+  document.getElementById('totalPlatformEarning').textContent = '₹'+totalPlatform;
+  document.getElementById('totalCustomerSpend').textContent   = '₹'+totalCustomer;
   document.getElementById('totalOrderCount').textContent      = allOrders.length;
 }
 
 function renderPlatformChart(delivered, period) {
   var bars = [], labels = [];
   var now = new Date();
+
   if (period === 'hourly') {
     for (var h=23; h>=0; h--) {
-      var hr = new Date(now); hr.setHours(now.getHours()-h, 0, 0, 0);
-      var nextHr = new Date(hr); nextHr.setHours(hr.getHours()+1);
-      var earn = delivered.filter(function(o){ var d=new Date(o.createdAt); return d>=hr&&d<nextHr; })
-        .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
+      var hr = new Date(now); hr.setHours(now.getHours()-h,0,0,0);
+      var nxt = new Date(hr); nxt.setHours(hr.getHours()+1);
+      var earn = delivered.filter(function(o){
+        var d=new Date(o.createdAt); return d>=hr && d<nxt;
+      }).reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
       bars.push(earn);
-      labels.push(hr.getHours()+':00');
+      if (h%6===0) labels.push(hr.getHours()+':00'); else labels.push('');
     }
-    labels = labels.filter(function(_,i){ return i%4===0; }).concat(['Now']);
   } else if (period === 'daily') {
-    var dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    for (var d=6; d>=0; d--) {
-      var day = new Date(now); day.setDate(now.getDate()-d); day.setHours(0,0,0,0);
-      var nextDay = new Date(day); nextDay.setDate(day.getDate()+1);
-      var earn2 = delivered.filter(function(o){ var od=new Date(o.createdAt); return od>=day&&od<nextDay; })
-        .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
-      bars.push(earn2); labels.push(dayNames[day.getDay()]);
+    var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    for (var dd=6; dd>=0; dd--) {
+      var day = new Date(now); day.setDate(now.getDate()-dd); day.setHours(0,0,0,0);
+      var nxtDay = new Date(day); nxtDay.setDate(day.getDate()+1);
+      var e2 = delivered.filter(function(o){
+        var d=new Date(o.createdAt); return d>=day && d<nxtDay;
+      }).reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
+      bars.push(e2); labels.push(days[day.getDay()]);
     }
   } else if (period === 'weekly') {
     for (var w=3; w>=0; w--) {
-      var wStart = new Date(now); wStart.setDate(now.getDate() - now.getDay() - w*7); wStart.setHours(0,0,0,0);
-      var wEnd = new Date(wStart); wEnd.setDate(wStart.getDate()+7);
-      var earn3 = delivered.filter(function(o){ var od=new Date(o.createdAt); return od>=wStart&&od<wEnd; })
-        .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
-      bars.push(earn3); labels.push('W'+(4-w));
+      var wS = new Date(now); wS.setDate(now.getDate()-now.getDay()-w*7); wS.setHours(0,0,0,0);
+      var wE = new Date(wS); wE.setDate(wS.getDate()+7);
+      var e3 = delivered.filter(function(o){
+        var d=new Date(o.createdAt); return d>=wS && d<wE;
+      }).reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
+      bars.push(e3); labels.push('W'+(4-w));
     }
   } else if (period === 'monthly') {
-    var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var mNames=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     for (var m=5; m>=0; m--) {
-      var mn = new Date(now.getFullYear(), now.getMonth()-m, 1);
-      var mnEnd = new Date(now.getFullYear(), now.getMonth()-m+1, 1);
-      var earn4 = delivered.filter(function(o){ var od=new Date(o.createdAt); return od>=mn&&od<mnEnd; })
-        .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
-      bars.push(earn4); labels.push(mNames[mn.getMonth()]);
+      var mn  = new Date(now.getFullYear(), now.getMonth()-m, 1);
+      var mnE = new Date(now.getFullYear(), now.getMonth()-m+1, 1);
+      var e4  = delivered.filter(function(o){
+        var d=new Date(o.createdAt); return d>=mn && d<mnE;
+      }).reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
+      bars.push(e4); labels.push(mNames[mn.getMonth()]);
     }
   } else {
     for (var y=4; y>=0; y--) {
       var yr = now.getFullYear()-y;
-      var earn5 = delivered.filter(function(o){ return new Date(o.createdAt).getFullYear()===yr; })
-        .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
-      bars.push(earn5); labels.push(yr);
+      var e5 = delivered.filter(function(o){
+        return new Date(o.createdAt).getFullYear()===yr;
+      }).reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*COMMISSION); },0);
+      bars.push(e5); labels.push(String(yr));
     }
   }
+
   var max = Math.max.apply(null, bars) || 1;
-  document.getElementById('platformChart').innerHTML = bars.map(function(v,i){
+  document.getElementById('platformChart').innerHTML = bars.map(function(v){
     return '<div class="bar-col">'
       +'<div class="bar-amt">'+(v>0?'₹'+v:'')+'</div>'
       +'<div class="bar-fill" style="height:'+(v/max*80)+'px;background:var(--gold)"></div>'
       +'</div>';
   }).join('');
-  document.getElementById('platformChartLabels').innerHTML = labels.map(function(l){ return '<span>'+l+'</span>'; }).join('');
+  document.getElementById('platformChartLabels').innerHTML =
+    labels.map(function(l){ return '<span>'+l+'</span>'; }).join('');
 }
 
 function renderVendorEarnings(orders) {
-  if (!orders.length) { document.getElementById('vendorEarningsTable').innerHTML='<div class="empty">No orders in this period</div>'; return; }
+  if (!orders.length) {
+    document.getElementById('vendorEarningsTable').innerHTML = '<div class="empty">No orders in this period</div>';
+    return;
+  }
   var byShop = {};
   orders.forEach(function(o) {
-    var sid  = (o.shop && (o.shop._id||o.shop)) || 'unknown';
-    var sname= (o.shop && o.shop.name) || o.shopName || 'Unknown Shop';
+    var sid   = (o.shop && (o.shop._id||o.shop)) || 'unknown';
+    var sname = (o.shop && o.shop.name) || o.shopName || 'Unknown Shop';
     if (!byShop[sid]) byShop[sid] = { name:sname, orders:0, gross:0, commission:0, payout:0 };
     var gross = o.totalAmount || o.subtotal || 0;
     var comm  = Math.round(gross * COMMISSION);
@@ -504,7 +508,7 @@ function renderVendorEarnings(orders) {
   document.getElementById('vendorEarningsTable').innerHTML =
     '<table class="data-table">'
     +'<tr><th>Shop</th><th>Orders</th><th>Gross</th><th>Vendor Gets</th><th>Platform</th></tr>'
-    + rows.map(function(r){
+    +rows.map(function(r){
       return '<tr>'
         +'<td style="font-weight:600">'+r.name+'</td>'
         +'<td>'+r.orders+'</td>'
@@ -517,20 +521,23 @@ function renderVendorEarnings(orders) {
 }
 
 function renderCustomerSpending(orders) {
-  if (!orders.length) { document.getElementById('customerSpendingTable').innerHTML='<div class="empty">No orders in this period</div>'; return; }
-  var byCustomer = {};
+  if (!orders.length) {
+    document.getElementById('customerSpendingTable').innerHTML = '<div class="empty">No orders in this period</div>';
+    return;
+  }
+  var byCust = {};
   orders.forEach(function(o) {
     var cid   = (o.customer && (o.customer._id||o.customer)) || 'unknown';
     var cname = (o.customer && o.customer.name) || 'Customer';
-    if (!byCustomer[cid]) byCustomer[cid] = { name:cname, orders:0, spent:0 };
-    byCustomer[cid].orders++;
-    byCustomer[cid].spent += (o.totalAmount || o.subtotal || 0);
+    if (!byCust[cid]) byCust[cid] = { name:cname, orders:0, spent:0 };
+    byCust[cid].orders++;
+    byCust[cid].spent += (o.totalAmount||o.subtotal||0);
   });
-  var rows = Object.values(byCustomer).sort(function(a,b){ return b.spent-a.spent; });
+  var rows = Object.values(byCust).sort(function(a,b){ return b.spent-a.spent; });
   document.getElementById('customerSpendingTable').innerHTML =
     '<table class="data-table">'
     +'<tr><th>Customer</th><th>Orders</th><th>Total Spent</th><th>Avg/Order</th></tr>'
-    + rows.map(function(r){
+    +rows.map(function(r){
       return '<tr>'
         +'<td style="font-weight:600">'+r.name+'</td>'
         +'<td>'+r.orders+'</td>'
@@ -541,17 +548,23 @@ function renderCustomerSpending(orders) {
     +'</table>';
 }
 
-// ─── ORDERS ───────────────────────────────────────
+// ─── ORDERS ────────────────────────────────────────────────────────────────
 function filterOrdersAdmin(f, btn) {
   currentOrderFilter = f;
-  if (btn) { btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); }); btn.classList.add('on'); }
+  if (btn) {
+    btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  }
   renderOrders();
 }
 
 function renderOrders() {
   var filtered = currentOrderFilter === 'all' ? allOrders
     : allOrders.filter(function(o){ return o.status === currentOrderFilter; });
-  if (!filtered.length) { document.getElementById('adminOrdersList').innerHTML='<div class="empty">No orders found</div>'; return; }
+  if (!filtered.length) {
+    document.getElementById('adminOrdersList').innerHTML = '<div class="empty">No orders found</div>';
+    return;
+  }
   document.getElementById('adminOrdersList').innerHTML = filtered.map(function(o) {
     var gross    = o.totalAmount || o.subtotal || 0;
     var comm     = Math.round(gross * COMMISSION);
@@ -560,12 +573,12 @@ function renderOrders() {
     var custName = (o.customer && o.customer.name) || 'Customer';
     var shopName = (o.shop && o.shop.name) || o.shopName || 'Shop';
     var dateStr  = o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
-    var statusCls= o.status==='delivered'?'b-delivered':o.status==='rejected'?'b-rejected':'b-pending';
-    var statusLbl= o.status==='delivered'?'✅ Delivered':o.status==='rejected'?'❌ Rejected':o.status==='placed'?'⏳ New':o.status;
+    var sCls     = o.status==='delivered'?'b-delivered':o.status==='rejected'?'b-rejected':'b-pending';
+    var sLbl     = o.status==='delivered'?'✅ Delivered':o.status==='rejected'?'❌ Rejected':o.status==='placed'?'⏳ New':o.status;
     return '<div class="rcard">'
       +'<div class="rcard-top"><div><div class="rcard-name">#'+dispId+' · '+shopName+'</div>'
       +'<div class="rcard-sub">'+custName+' · '+dateStr+'</div></div>'
-      +'<span class="badge '+statusCls+'">'+statusLbl+'</span></div>'
+      +'<span class="badge '+sCls+'">'+sLbl+'</span></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">'
       +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">₹'+gross+'</div><div style="font-size:0.6rem;color:var(--slate)">Customer Paid</div></div>'
       +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+payout+'</div><div style="font-size:0.6rem;color:var(--slate)">Vendor Gets</div></div>'
@@ -574,23 +587,29 @@ function renderOrders() {
   }).join('');
 }
 
-// ─── VENDORS ──────────────────────────────────────
+// ─── VENDORS ───────────────────────────────────────────────────────────────
 function renderVendors() {
-  if (!allVendors.length) { document.getElementById('vendorsList').innerHTML='<div class="empty">No vendors yet</div>'; return; }
+  if (!allVendors.length) {
+    document.getElementById('vendorsList').innerHTML = '<div class="empty">No vendors yet</div>';
+    return;
+  }
   document.getElementById('vendorsList').innerHTML = allVendors.map(function(v) {
-    var totalEarned = allOrders.filter(function(o){ return o.status==='delivered' && ((o.shop&&(o.shop._id||o.shop))===v._id||o.shop===v._id); })
-      .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*0.85); },0);
-    var orderCount  = allOrders.filter(function(o){ return (o.shop&&(o.shop._id||o.shop))===v._id||o.shop===v._id; }).length;
+    var vOrders = allOrders.filter(function(o){
+      var sid = o.shop && (o.shop._id||o.shop);
+      return sid === v._id;
+    });
+    var earned  = vOrders.filter(function(o){ return o.status==='delivered'; })
+      .reduce(function(a,o){ return a+Math.round((o.totalAmount||0)*0.85); }, 0);
     return '<div class="rcard">'
       +'<div class="rcard-top"><div><div class="rcard-name">'+v.name+'</div>'
-      +'<div class="rcard-sub">'+v.area+' · '+v.phone+'</div></div>'
+      +'<div class="rcard-sub">'+(v.area||'')+' · '+(v.phone||'')+'</div></div>'
       +'<span class="badge '+(v.isApproved?'b-delivered':'b-pending')+'">'+(v.isApproved?'✅ Active':'⏳ Pending')+'</span></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">'
-      +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">'+orderCount+'</div><div style="font-size:0.6rem;color:var(--slate)">Orders</div></div>'
-      +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+totalEarned+'</div><div style="font-size:0.6rem;color:var(--slate)">Earned</div></div>'
+      +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">'+vOrders.length+'</div><div style="font-size:0.6rem;color:var(--slate)">Orders</div></div>'
+      +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+earned+'</div><div style="font-size:0.6rem;color:var(--slate)">Earned</div></div>'
       +'<div style="background:#fef9ec;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--gold)">'+(v.isOpen?'🟢':'🔴')+'</div><div style="font-size:0.6rem;color:var(--slate)">'+(v.isOpen?'Open':'Closed')+'</div></div>'
       +'</div>'
-      +(!v.isApproved?'<div class="rcard-btns"><button class="rbtn rbtn-approve" onclick="approveVendor(\''+v._id+'\')">✅ Approve Shop</button><button class="rbtn rbtn-reject" onclick="toast(\'Contact vendor@dhobiwala.in\')">📧 Contact</button></div>':'')
+      +(!v.isApproved?'<div class="rcard-btns"><button class="rbtn rbtn-approve" onclick="approveVendor(\''+v._id+'\')">✅ Approve Shop</button></div>':'')
       +'</div>';
   }).join('');
 }
@@ -598,31 +617,47 @@ function renderVendors() {
 function approveVendor(id) {
   fetch(API+'/api/shops/'+id+'/approve', { method:'PUT', headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data){ if(data.success){ toast('✅ Shop approved!'); loadVendors(); } else { toast(data.message||'Failed'); } })
-  .catch(function(){ toast('Network error'); });
+  .then(function(d) {
+    if (d.success) { toast('✅ Shop approved!'); loadVendors(); }
+    else { toast(d.message||'Failed'); }
+  }).catch(function(){ toast('Network error'); });
 }
 
-// ─── RIDERS ───────────────────────────────────────
+// ─── RIDERS ────────────────────────────────────────────────────────────────
 function filterRiders(f, btn) {
   currentRiderFilter = f;
-  if (btn) { btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); }); btn.classList.add('on'); }
+  if (btn) {
+    btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  }
   renderRiders();
 }
 
 function renderRiders() {
   var filtered = allRiders;
   if (currentRiderFilter === 'pending')  filtered = allRiders.filter(function(r){ return !r.approved && !r.rejected; });
-  if (currentRiderFilter === 'approved') filtered = allRiders.filter(function(r){ return r.approved; });
-  if (!filtered.length) { document.getElementById('ridersList').innerHTML='<div class="empty">No riders found</div>'; return; }
+  if (currentRiderFilter === 'approved') filtered = allRiders.filter(function(r){ return r.approved && !r.revoked; });
+  if (!filtered.length) {
+    document.getElementById('ridersList').innerHTML = '<div class="empty">No riders found</div>';
+    return;
+  }
   document.getElementById('ridersList').innerHTML = filtered.map(function(r) {
-    var status = r.approved ? 'Approved' : r.rejected ? 'Rejected' : 'Pending';
-    var statusCls = r.approved ? 'b-delivered' : r.rejected ? 'b-rejected' : 'b-pending';
+    var isPending  = !r.approved && !r.rejected;
+    var isApproved = r.approved && !r.revoked;
+    var isRevoked  = r.revoked;
+    var sCls = isApproved?'b-delivered':isRevoked?'b-rejected':isPending?'b-pending':'b-rejected';
+    var sLbl = isApproved?'✅ Approved':isRevoked?'🚫 Revoked':isPending?'⏳ Pending':'❌ Rejected';
     return '<div class="rcard">'
       +'<div class="rcard-top"><div><div class="rcard-name">'+r.name+'</div>'
-      +'<div class="rcard-sub">📞 +91 '+r.phone+' · '+r.vehicle+' · '+r.area+'</div></div>'
-      +'<span class="badge '+statusCls+'">'+status+'</span></div>'
-      +(!r.approved && !r.rejected ? '<div class="rcard-btns"><button class="rbtn rbtn-approve" onclick="approveRider(\''+r._id+'\')">✅ Approve</button><button class="rbtn rbtn-reject" onclick="openRejectModal(\''+r._id+'\')">❌ Reject</button></div>':'')
-      +(r.approved ? '<div class="rcard-btns"><button class="rbtn rbtn-revoke" onclick="revokeRider(\''+r._id+'\')">🚫 Revoke Access</button></div>':'')
+      +'<div class="rcard-sub">📞 +91 '+r.phone+' · '+(r.vehicle||'')+' · '+(r.area||'')+'</div></div>'
+      +'<span class="badge '+sCls+'">'+sLbl+'</span></div>'
+      +(isPending?'<div class="rcard-btns">'
+        +'<button class="rbtn rbtn-approve" onclick="approveRider(\''+r._id+'\')">✅ Approve</button>'
+        +'<button class="rbtn rbtn-reject" onclick="openRejectModal(\''+r._id+'\')">❌ Reject</button>'
+        +'</div>':'')
+      +(isApproved?'<div class="rcard-btns">'
+        +'<button class="rbtn rbtn-revoke" onclick="revokeRider(\''+r._id+'\')">🚫 Revoke Access</button>'
+        +'</div>':'')
       +'</div>';
   }).join('');
 }
@@ -630,51 +665,74 @@ function renderRiders() {
 function approveRider(id) {
   fetch(API+'/api/riders/'+id+'/approve', { method:'PUT', headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data){ if(data.success){ toast('✅ Rider approved!'); loadRiders(); } else { toast(data.message||'Failed'); } })
-  .catch(function(){ toast('Network error'); });
+  .then(function(d) {
+    if (d.success) { toast('✅ Rider approved!'); loadRiders(); }
+    else { toast(d.message||'Failed'); }
+  }).catch(function(){ toast('Network error'); });
 }
 
-function openRejectModal(id) { currentRejectId = id; document.getElementById('rejectReason').value=''; document.getElementById('rejectModal').classList.add('open'); }
-function closeModal() { document.getElementById('rejectModal').classList.remove('open'); }
+function openRejectModal(id) {
+  currentRejectId = id;
+  document.getElementById('rejectReason').value = '';
+  document.getElementById('rejectModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('rejectModal').classList.remove('open');
+}
 
 function confirmReject() {
   var reason = document.getElementById('rejectReason').value.trim();
-  fetch(API+'/api/riders/'+currentRejectId+'/reject', { method:'PUT', headers:authHeader(), body:JSON.stringify({reason:reason}) })
+  fetch(API+'/api/riders/'+currentRejectId+'/reject', {
+    method:'PUT', headers:authHeader(),
+    body: JSON.stringify({ reason:reason })
+  })
   .then(function(r){ return r.json(); })
-  .then(function(data){ closeModal(); if(data.success){ toast('Rider rejected.'); loadRiders(); } else { toast(data.message||'Failed'); } })
-  .catch(function(){ closeModal(); toast('Network error'); });
+  .then(function(d) {
+    closeModal();
+    if (d.success) { toast('Rider rejected.'); loadRiders(); }
+    else { toast(d.message||'Failed'); }
+  }).catch(function(){ closeModal(); toast('Network error'); });
 }
 
 function revokeRider(id) {
   fetch(API+'/api/riders/'+id+'/revoke', { method:'PUT', headers:authHeader() })
   .then(function(r){ return r.json(); })
-  .then(function(data){ if(data.success){ toast('🚫 Access revoked.'); loadRiders(); } else { toast(data.message||'Failed'); } })
-  .catch(function(){ toast('Network error'); });
+  .then(function(d) {
+    if (d.success) { toast('🚫 Access revoked.'); loadRiders(); }
+    else { toast(d.message||'Failed'); }
+  }).catch(function(){ toast('Network error'); });
 }
 
-// ─── CUSTOMERS ────────────────────────────────────
+// ─── CUSTOMERS ─────────────────────────────────────────────────────────────
 function renderCustomers() {
-  if (!allCustomers.length) { document.getElementById('customersList').innerHTML='<div class="empty">No customers yet</div>'; return; }
+  if (!allCustomers.length) {
+    document.getElementById('customersList').innerHTML = '<div class="empty">No customers yet</div>';
+    return;
+  }
   document.getElementById('customersList').innerHTML = allCustomers.map(function(c) {
-    var custOrders  = allOrders.filter(function(o){ return (o.customer&&(o.customer._id||o.customer))===c._id; });
-    var totalSpent  = custOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
-    var weekOrders  = filterByPeriod(custOrders,'weekly');
-    var monthOrders = filterByPeriod(custOrders,'monthly');
-    var weekSpent   = weekOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
-    var monthSpent  = monthOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
+    var cOrders  = allOrders.filter(function(o){
+      var cid = o.customer && (o.customer._id||o.customer);
+      return cid === c._id;
+    });
+    var total   = cOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
+    var wOrders = filterByPeriod(cOrders,'weekly');
+    var mOrders = filterByPeriod(cOrders,'monthly');
+    var wSpent  = wOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
+    var mSpent  = mOrders.reduce(function(a,o){ return a+(o.totalAmount||0); }, 0);
     return '<div class="rcard">'
       +'<div class="rcard-top"><div><div class="rcard-name">'+c.name+'</div>'
-      +'<div class="rcard-sub">📞 +91 '+c.phone+'</div></div>'
-      +'<span class="badge b-delivered">'+custOrders.length+' orders</span></div>'
+      +'<div class="rcard-sub">📞 +91 '+(c.phone||c.email||'')+'</div></div>'
+      +'<span class="badge b-delivered">'+cOrders.length+' orders</span></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">'
-      +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">₹'+totalSpent+'</div><div style="font-size:0.6rem;color:var(--slate)">All Time</div></div>'
-      +'<div style="background:#eff6ff;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--blue)">₹'+weekSpent+'</div><div style="font-size:0.6rem;color:var(--slate)">This Week</div></div>'
-      +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+monthSpent+'</div><div style="font-size:0.6rem;color:var(--slate)">This Month</div></div>'
+      +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">₹'+total+'</div><div style="font-size:0.6rem;color:var(--slate)">All Time</div></div>'
+      +'<div style="background:#eff6ff;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--blue)">₹'+wSpent+'</div><div style="font-size:0.6rem;color:var(--slate)">This Week</div></div>'
+      +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+mSpent+'</div><div style="font-size:0.6rem;color:var(--slate)">This Month</div></div>'
       +'</div></div>';
   }).join('');
 }
 
-// ─── NAVIGATION ───────────────────────────────────
+// ─── SECTION NAV ───────────────────────────────────────────────────────────
 function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('show'); });
   document.getElementById(id).classList.add('show');
@@ -683,19 +741,24 @@ function showSection(id, btn) {
   else {
     var map = { secAnalytics:0, secOrders:1, secVendors:2, secRiders:3, secCustomers:4 };
     var tabs = document.querySelectorAll('.nav-tab');
-    if (tabs[map[id]]) tabs[map[id]].classList.add('on');
+    if (map[id] !== undefined && tabs[map[id]]) tabs[map[id]].classList.add('on');
   }
-  // Update bnav
+  // Sync bnav
   document.querySelectorAll('.bnav-item').forEach(function(b){ b.classList.remove('on'); });
   var bnavMap = { secAnalytics:0, secOrders:1, secVendors:2, secRiders:3 };
-  var bnavItems = document.querySelectorAll('.bnav-item');
-  if (bnavMap[id] !== undefined && bnavItems[bnavMap[id]]) bnavItems[bnavMap[id]].classList.add('on');
+  var bItems = document.querySelectorAll('.bnav-item');
+  if (bnavMap[id] !== undefined && bItems[bnavMap[id]]) bItems[bnavMap[id]].classList.add('on');
 }
 
-function toast(msg) { var el=document.getElementById('toastEl'); el.textContent=msg; el.classList.add('show'); setTimeout(function(){ el.classList.remove('show'); },2600); }
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+function toast(msg) {
+  var el = document.getElementById('toastEl');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2600);
+}
 
-// ─── BOOT ─────────────────────────────────────────
-(function(){
+// ─── BOOT ──────────────────────────────────────────────────────────────────
+(function() {
   var t = localStorage.getItem('dw_admin_token');
   if (t) { adminToken = t; bootDash(); }
 })();
