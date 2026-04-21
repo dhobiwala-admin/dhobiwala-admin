@@ -249,6 +249,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     </div>
   </div>
 
+  
+    <div class="card">
+      <div class="card-title">🚨 Ops Queue <span>Production flow</span></div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val" id="stuckOrders">0</div><div class="stat-lbl">Stuck Orders</div></div>
+        <div class="stat-box"><div class="stat-val red" id="slaBreaches">0</div><div class="stat-lbl">SLA Breaches</div></div>
+      </div>
+      <div id="opsQueueWrap"><div class="empty">Loading ops queue...</div></div>
+    </div>
+
+
   <!-- ORDERS -->
   <div class="section" id="secOrders">
     <div class="period-tabs" style="margin-bottom:12px">
@@ -377,6 +388,7 @@ function loadAllData() {
   loadRiders();
   loadVendors();
   loadCustomers();
+  loadOpsQueues();
   updateAdminSyncLabel();
 }
 
@@ -389,6 +401,30 @@ function updateAdminSyncLabel() {
   if (!lbl) return;
   if (!lastAdminSyncAt) { lbl.textContent = 'Snapshot · waiting'; return; }
   lbl.textContent = 'Snapshot · updated ' + lastAdminSyncAt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+
+function loadOpsQueues() {
+  Promise.all([
+    fetch(API+'/api/admin/stuck-orders', { headers:authHeader() }).then(function(r){ return r.json(); }).catch(function(){ return { success:false, orders:[] }; }),
+    fetch(API+'/api/admin/sla-breaches', { headers:authHeader() }).then(function(r){ return r.json(); }).catch(function(){ return { success:false, breaches:[] }; })
+  ]).then(function(res){
+    var stuck = (res[0].success && res[0].orders) ? res[0].orders : [];
+    var breaches = (res[1].success && (res[1].breaches || res[1].orders)) ? (res[1].breaches || res[1].orders) : [];
+    var stuckEl = document.getElementById('stuckOrders');
+    var breachEl = document.getElementById('slaBreaches');
+    if (stuckEl) stuckEl.textContent = stuck.length;
+    if (breachEl) breachEl.textContent = breaches.length;
+    var wrap = document.getElementById('opsQueueWrap');
+    if (!wrap) return;
+    var rows = stuck.slice(0,5);
+    if (!rows.length) { wrap.innerHTML = '<div class="empty">No stuck orders</div>'; return; }
+    wrap.innerHTML = rows.map(function(o){
+      var shop = (o.shop && o.shop.name) || o.shopName || 'Shop';
+      var cust = (o.customer && o.customer.name) || 'Customer';
+      return '<div class="live-item"><span class="live-name">#'+String(o._id||'').slice(-6).toUpperCase()+' · '+shop+'</span><span class="live-meta">'+cust+' · '+(o.status||'')+'</span><span class="live-badge lb-closed">Action</span></div>';
+    }).join('');
+  });
 }
 
 // ─── LOAD DATA ─────────────────────────────────────────────────────────────
