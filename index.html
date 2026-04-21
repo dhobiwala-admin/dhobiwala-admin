@@ -7,13 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--ink:#1f150f;--gold:#C89B3C;--gold-deep:#8f6120;--gold-soft:#e7c87a;--green:#16a34a;--red:#dc2626;--blue:#1d4ed8;--slate:#7a6a58;--border:#eadcc7;--light:#f8efe1;--cream:#fbf5ea;--white:#fffdf9;--purple:#7c3aed;--hero-dark:#2a1d15;--hero-mid:#6f4a22}
-body{
-font-family:'DM Sans',sans-serif;
-background:
-radial-gradient(circle at 50% 12%, rgba(231,200,122,0.55) 0%, rgba(231,200,122,0.18) 18%, rgba(251,245,234,0) 38%),
-linear-gradient(180deg,#f2dfb8 0%, #f8ecd7 22%, #fbf5ea 50%, #f5e6cf 100%);
-max-width:430px;margin:0 auto;min-height:100vh}
+:root{--ink:#0a0a0f;--gold:#e8a020;--green:#16a34a;--red:#dc2626;--blue:#1d4ed8;--slate:#64748b;--border:#e8e4dc;--light:#f5f0e8;--cream:#faf8f3;--white:#fff;--purple:#7c3aed}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;margin:0 auto;min-height:100vh}
 .page{display:none;min-height:100vh;flex-direction:column}
 .page.show{display:flex}
 .auth-wrap{background:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center}
@@ -106,119 +101,16 @@ max-width:430px;margin:0 auto;min-height:100vh}
 .live-name{font-weight:600;color:var(--ink);flex:1}
 .live-meta{font-size:0.7rem;color:var(--slate)}
 .live-badge{border-radius:12px;padding:2px 8px;font-size:0.65rem;font-weight:700}
-
-.auth-wrap{
-background:
-radial-gradient(circle at 50% 14%, rgba(231,200,122,0.48) 0%, rgba(231,200,122,0.16) 16%, rgba(31,21,15,0) 34%),
-linear-gradient(180deg,#2a1d15 0%, #3d2a1d 26%, #1f150f 100%);
-}
-.auth-card{
-background:rgba(255,253,249,0.09);
-border:1px solid rgba(231,200,122,0.16);
-backdrop-filter:blur(10px);
-box-shadow:0 18px 45px rgba(0,0,0,0.18);
-}
-.auth-badge{
-background:rgba(200,155,60,0.10);
-border:1px solid rgba(200,155,60,0.22);
-color:var(--gold-soft);
-}
-.auth-input:focus{border-color:var(--gold-soft); box-shadow:0 0 0 3px rgba(200,155,60,0.12)}
-.auth-btn{
-background:linear-gradient(135deg,var(--gold-soft) 0%, var(--gold) 45%, var(--gold-deep) 100%);
-color:#24170e;
-box-shadow:0 10px 24px rgba(157,111,34,0.25);
-}
-.dash-header{
-background:
-radial-gradient(circle at 50% -10%, rgba(231,200,122,0.42) 0%, rgba(231,200,122,0.12) 28%, rgba(31,21,15,0) 50%),
-linear-gradient(180deg,#2a1d15 0%, #3c2a1d 35%, #24170e 100%);
-padding:20px 20px 18px;
-}
-.card{
-background:rgba(255,253,249,0.88);
-border:1px solid rgba(200,155,60,0.14);
-box-shadow:0 10px 28px rgba(71,49,24,0.08);
-backdrop-filter:blur(10px);
-}
-.stat-box{
-background:linear-gradient(180deg, rgba(255,253,249,0.95) 0%, rgba(250,243,230,0.92) 100%);
-border:1px solid rgba(200,155,60,0.12);
-box-shadow:0 8px 18px rgba(71,49,24,0.06);
-}
-.nav-tabs,.bnav{
-background:rgba(255,253,249,0.92);
-backdrop-filter:blur(12px);
-}
-.admin-badge{
-background:rgba(200,155,60,0.14);
-border:1px solid rgba(200,155,60,0.3);
-color:var(--gold-soft);
-}
-.brand-logo-lockup{display:flex;align-items:center;gap:12px}
-.brand-logo-lockup.center{flex-direction:column;gap:10px}
-.brand-logo-svg{display:block;width:132px;max-width:100%;height:auto}
-.brand-logo-svg.compact{width:110px}
-.brand-word-sub{font-size:11px;color:var(--gold-soft)}
-.hero-summary{
-margin:14px 16px 8px;
-padding:18px;
-border-radius:22px;
-background:
-linear-gradient(180deg, rgba(255,250,242,0.92) 0%, rgba(250,241,226,0.92) 100%);
-border:1px solid rgba(200,155,60,0.18);
-box-shadow:0 12px 30px rgba(71,49,24,0.10);
-position:relative;
-overflow:hidden;
-}
-.hero-summary:before{
-content:"";
-position:absolute;inset:0;
-background:
-radial-gradient(circle at 80% 15%, rgba(231,200,122,0.28) 0%, rgba(231,200,122,0.10) 16%, rgba(255,255,255,0) 36%);
-pointer-events:none;
-}
-.hero-title{font-family:'Syne',sans-serif;font-size:1.55rem;color:#2b1d14;font-weight:800;margin-bottom:4px}
-.hero-title .gold{color:var(--gold-deep)}
-.hero-sub{color:#7a6a58;font-size:0.85rem;margin-bottom:16px}
-.kpi-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}
-.kpi-main,.kpi-mini{
-background:rgba(255,253,249,0.68);
-border:1px solid rgba(200,155,60,0.14);
-border-radius:18px;
-padding:14px;
-backdrop-filter:blur(8px);
-}
-.kpi-main{grid-row:span 2;display:flex;flex-direction:column;justify-content:space-between;min-height:158px}
-.kpi-overline{font-size:0.66rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8d7a64}
-.kpi-value{font-family:'Syne',sans-serif;font-size:2.2rem;color:#2b1d14;font-weight:800;line-height:1}
-.kpi-trend{font-size:0.78rem;font-weight:700;color:#7a8f2f}
-.kpi-label{font-size:0.73rem;color:#7a6a58;font-weight:600;margin-top:4px}
-.orders-overview-card{
-background:rgba(255,253,249,0.88);
-border:1px solid rgba(200,155,60,0.14);
-border-radius:20px;
-padding:18px;
-margin:0 16px 12px;
-box-shadow:0 10px 28px rgba(71,49,24,0.08);
-}
-.overview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.overview-title{font-family:'Syne',sans-serif;font-size:1.08rem;color:#2b1d14;font-weight:800}
-.overview-arrow{font-size:1.4rem;color:#7a6a58}
-.orders-mini-table{width:100%;border-collapse:collapse}
-.orders-mini-table th{font-size:0.66rem;color:#8a7761;text-transform:uppercase;letter-spacing:0.06em;text-align:left;padding:8px 6px;border-bottom:1px solid #efe4d2}
-.orders-mini-table td{font-size:0.84rem;color:#2b1d14;padding:10px 6px;border-bottom:1px solid #f5ebdc}
-.orders-mini-table tr:last-child td{border-bottom:none}
-.status-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:0.68rem;font-weight:700}
-.status-pending{background:#fbe3d8;color:#b45309}
-.status-progress{background:#f7ecd1;color:#9a6a15}
-.status-complete{background:#e6f5e9;color:#15803d}
-.auth-logo{margin-bottom:2px}
-.dash-mark{display:flex;align-items:center}
-
 .lb-open{background:#f0fdf4;color:var(--green)}
 .lb-closed{background:#f5f0e8;color:var(--slate)}
 .lb-duty{background:#fef9ec;color:#d97706}
+
+.brand-logo-wrap{display:flex;align-items:center;gap:10px}
+.brand-logo-auth{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px}
+.brand-logo-auth svg{width:140px;height:auto;display:block}
+.brand-logo-mini svg{width:86px;height:auto;display:block}
+.brand-tagline{font-size:11px;letter-spacing:1px;color:var(--gold);text-align:center}
+
 </style>
 </head>
 <body>
@@ -227,76 +119,8 @@ box-shadow:0 10px 28px rgba(71,49,24,0.08);
 <div class="page show" id="pgAuth">
   <div class="auth-wrap">
     
-<div class="brand-logo-lockup center auth-logo">
-  <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg" aria-label="Shuchi logo" class="brand-logo-svg">
-  <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#e7c87a"/>
-      <stop offset="45%" stop-color="#c89b3c"/>
-      <stop offset="100%" stop-color="#8d6120"/>
-    </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.2" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <g transform="translate(110,6)" fill="url(#g1)" filter="url(#softGlow)">
-    <path d="M101 0
-             C114 28 129 52 142 76
-             C150 92 150 112 140 128
-             C131 143 119 154 105 165
-             C111 148 119 128 117 109
-             C115 87 99 67 82 47
-             C94 30 100 17 101 0Z"/>
-    <path d="M101 0
-             C88 28 73 52 60 76
-             C52 92 52 112 62 128
-             C71 143 83 154 97 165
-             C91 148 83 128 85 109
-             C87 87 103 67 120 47
-             C108 30 102 17 101 0Z"/>
-    <path d="M99 32
-             C83 55 73 77 73 99
-             C73 118 81 137 97 165
-             C88 142 90 123 100 104
-             C112 82 128 68 130 45
-             C123 55 113 60 99 32Z"/>
-    <path d="M14 128
-             C44 134 64 149 81 170
-             C60 164 43 156 27 144
-             C17 136 11 132 14 128Z"/>
-    <path d="M32 109
-             C62 118 83 136 98 164
-             C73 151 56 140 42 127
-             C31 118 27 112 32 109Z"/>
-    <path d="M188 128
-             C158 134 138 149 121 170
-             C142 164 159 156 175 144
-             C185 136 191 132 188 128Z"/>
-    <path d="M170 109
-             C140 118 119 136 104 164
-             C129 151 146 140 160 127
-             C171 118 175 112 170 109Z"/>
-    <path d="M103 66
-             C109 73 112 82 112 91
-             C112 82 115 73 121 66
-             C114 60 109 56 103 66Z"/>
-  </g>
-
-  <text x="210" y="168" text-anchor="middle"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="74" fill="url(#g1)" letter-spacing="0.5">Shuchi</text>
-
-  <line x1="48" y1="196" x2="122" y2="196" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
-  <text x="210" y="204" text-anchor="middle"
-        font-family="'Noto Serif Devanagari','Mangal','Kokila',serif"
-        font-size="28" fill="url(#g1)" letter-spacing="0.2">शुचिता सर्वदा</text>
-  <line x1="298" y1="196" x2="372" y2="196" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
-</svg>
+<div class="brand-logo-auth">
+  
 </div>
 
     <div class="auth-badge">◆ Admin Control Panel</div>
@@ -315,140 +139,14 @@ box-shadow:0 10px 28px rgba(71,49,24,0.08);
   <div class="dash-header">
     <div class="dash-top">
       
-<div class="dash-mark">
-  <div class="brand-logo-lockup">
-    <svg viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg" aria-label="Shuchi logo" class="brand-logo-svg compact">
-  <defs>
-    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#e7c87a"/>
-      <stop offset="45%" stop-color="#c89b3c"/>
-      <stop offset="100%" stop-color="#8d6120"/>
-    </linearGradient>
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="2.2" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <g transform="translate(110,6)" fill="url(#g1)" filter="url(#softGlow)">
-    <path d="M101 0
-             C114 28 129 52 142 76
-             C150 92 150 112 140 128
-             C131 143 119 154 105 165
-             C111 148 119 128 117 109
-             C115 87 99 67 82 47
-             C94 30 100 17 101 0Z"/>
-    <path d="M101 0
-             C88 28 73 52 60 76
-             C52 92 52 112 62 128
-             C71 143 83 154 97 165
-             C91 148 83 128 85 109
-             C87 87 103 67 120 47
-             C108 30 102 17 101 0Z"/>
-    <path d="M99 32
-             C83 55 73 77 73 99
-             C73 118 81 137 97 165
-             C88 142 90 123 100 104
-             C112 82 128 68 130 45
-             C123 55 113 60 99 32Z"/>
-    <path d="M14 128
-             C44 134 64 149 81 170
-             C60 164 43 156 27 144
-             C17 136 11 132 14 128Z"/>
-    <path d="M32 109
-             C62 118 83 136 98 164
-             C73 151 56 140 42 127
-             C31 118 27 112 32 109Z"/>
-    <path d="M188 128
-             C158 134 138 149 121 170
-             C142 164 159 156 175 144
-             C185 136 191 132 188 128Z"/>
-    <path d="M170 109
-             C140 118 119 136 104 164
-             C129 151 146 140 160 127
-             C171 118 175 112 170 109Z"/>
-    <path d="M103 66
-             C109 73 112 82 112 91
-             C112 82 115 73 121 66
-             C114 60 109 56 103 66Z"/>
-  </g>
-
-  <text x="210" y="168" text-anchor="middle"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="74" fill="url(#g1)" letter-spacing="0.5">Shuchi</text>
-
-  <line x1="48" y1="196" x2="122" y2="196" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
-  <text x="210" y="204" text-anchor="middle"
-        font-family="'Noto Serif Devanagari','Mangal','Kokila',serif"
-        font-size="28" fill="url(#g1)" letter-spacing="0.2">शुचिता सर्वदा</text>
-  <line x1="298" y1="196" x2="372" y2="196" stroke="url(#g1)" stroke-width="3" stroke-linecap="round"/>
-</svg>
-  </div>
+<div class="dash-mark brand-logo-mini">
+  
 </div>
 
       <div class="admin-badge">ADMIN</div>
     </div>
     <div class="dash-greet" id="dashGreet">Good morning, Admin 👋</div>
   </div>
-  
-  <div class="hero-summary">
-    <div class="hero-title">Hello, <span class="gold">Admin</span></div>
-    <div class="hero-sub">Here’s the latest stats of Shuchi</div>
-    <div class="kpi-grid">
-      <div class="kpi-main">
-        <div class="kpi-overline">Dashboard Summary</div>
-        <div>
-          <div class="kpi-value" id="heroRevenue">₹0</div>
-          <div class="kpi-trend" id="heroRevenueTrend">Today’s revenue</div>
-        </div>
-        <div class="kpi-label">Live delivered-order revenue</div>
-      </div>
-      <div class="kpi-mini">
-        <div class="kpi-overline">Active Orders</div>
-        <div class="kpi-value" style="font-size:1.5rem" id="heroActiveOrders">0</div>
-        <div class="kpi-label">In progress</div>
-      </div>
-      <div class="kpi-mini">
-        <div class="kpi-overline">Total Earnings</div>
-        <div class="kpi-value" style="font-size:1.5rem" id="heroTotalEarnings">₹0</div>
-        <div class="kpi-label">Platform total</div>
-      </div>
-      <div class="kpi-mini">
-        <div class="kpi-overline">Total Vendors</div>
-        <div class="kpi-value" style="font-size:1.5rem" id="heroVendors">0</div>
-        <div class="kpi-label">Partner shops</div>
-      </div>
-      <div class="kpi-mini">
-        <div class="kpi-overline">Riders Live</div>
-        <div class="kpi-value" style="font-size:1.5rem" id="heroRiders">0</div>
-        <div class="kpi-label">Approved riders</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="orders-overview-card">
-    <div class="overview-head">
-      <div class="overview-title">Orders Overview</div>
-      <div class="overview-arrow">›</div>
-    </div>
-    <div class="period-tabs" style="margin-bottom:12px">
-      <button class="period-tab on" onclick="setOverviewPeriod('today',this)">Today</button>
-      <button class="period-tab" onclick="setOverviewPeriod('week',this)">Week</button>
-      <button class="period-tab" onclick="setOverviewPeriod('month',this)">Month</button>
-    </div>
-    <table class="orders-mini-table">
-      <thead>
-        <tr><th>Order</th><th>Customer</th><th>Items</th><th>Status</th></tr>
-      </thead>
-      <tbody id="ordersOverviewBody">
-        <tr><td colspan="4" style="text-align:center;color:#8a7761">No recent orders</td></tr>
-      </tbody>
-    </table>
-  </div>
-
   <div class="nav-tabs">
     <button class="nav-tab on" onclick="showSection('secAnalytics',this)">📊 Analytics</button>
     <button class="nav-tab" onclick="showSection('secOrders',this)">📦 Orders</button>
@@ -462,7 +160,7 @@ box-shadow:0 10px 28px rgba(71,49,24,0.08);
 
     <!-- LIVE STATUS CARD -->
     <div class="card">
-      <div class="card-title">🟢 Live Status <span id="liveLastRefresh">Just now</span></div>
+      <div class="card-title">🟢 Live Status <span id="liveLastRefresh">Snapshot · Just now</span></div>
       <div class="stats-grid four" style="margin-bottom:10px">
         <div class="stat-box" style="border-color:#bbf7d0">
           <div class="stat-val green" id="liveShopsOpen">0</div>
@@ -485,7 +183,7 @@ box-shadow:0 10px 28px rgba(71,49,24,0.08);
       <div id="liveRidersList" style="margin-top:8px"></div>
       <!-- Active shops list -->
       <div id="liveShopsList" style="margin-top:8px"></div>
-      <button onclick="refreshLiveStatus()" style="width:100%;margin-top:12px;padding:10px;background:var(--light);border:1px solid var(--border);border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;color:var(--slate)">🔄 Refresh Live Status</button>
+      <button onclick="refreshLiveStatus()" style="width:100%;margin-top:12px;padding:10px;background:var(--light);border:1px solid var(--border);border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;color:var(--slate)">🔄 Refresh Live Status</button><div style="font-size:0.72rem;color:var(--slate);margin-top:8px;text-align:center">Snapshot view auto-refreshes every 45 seconds</div>
     </div>
 
     <!-- DAILY LOGIN ACTIVITY CARD -->
@@ -618,7 +316,7 @@ var allCustomers       = [];
 var currentRiderFilter = 'all';
 var currentOrderFilter = 'all';
 var currentRejectId    = null;
-var periods            = { platform:'hourly', vendor:'daily', customer:'weekly' };
+var periods            = { platform:'hourly', vendor:'daily', customer:'weekly' };\nvar adminRefreshTimer   = null;\nvar lastAdminSyncAt     = null;
 
 // ─── AUTH ──────────────────────────────────────────────────────────────────
 function showAuthErr(m) {
@@ -653,92 +351,12 @@ function doLogin() {
 }
 
 function doLogout() {
+  if (adminRefreshTimer) { clearInterval(adminRefreshTimer); adminRefreshTimer = null; }
   localStorage.removeItem('dw_admin_token');
   adminToken = null;
   allOrders = []; allRiders = []; allVendors = []; allCustomers = [];
   document.getElementById('pgDash').classList.remove('show');
   document.getElementById('pgAuth').classList.add('show');
-}
-
-
-var overviewPeriod = 'today';
-
-function setOverviewPeriod(period, btn) {
-  overviewPeriod = period;
-  btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
-  renderOrdersOverview();
-}
-
-function filterOrdersByOverviewPeriod(orders) {
-  var now = new Date();
-  return orders.filter(function(o) {
-    if (!o.createdAt) return false;
-    var d = new Date(o.createdAt);
-    if (overviewPeriod === 'today') return d.toDateString() === now.toDateString();
-    if (overviewPeriod === 'week') {
-      var wStart = new Date(now);
-      wStart.setDate(now.getDate() - now.getDay());
-      wStart.setHours(0,0,0,0);
-      return d >= wStart;
-    }
-    if (overviewPeriod === 'month') {
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    }
-    return true;
-  });
-}
-
-function renderOrdersOverview() {
-  var body = document.getElementById('ordersOverviewBody');
-  if (!body) return;
-  var rows = filterOrdersByOverviewPeriod(allOrders).slice().sort(function(a,b){
-    return new Date(b.createdAt||0) - new Date(a.createdAt||0);
-  }).slice(0,3);
-
-  if (!rows.length) {
-    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#8a7761">No recent orders</td></tr>';
-    return;
-  }
-
-  body.innerHTML = rows.map(function(o){
-    var dispId = '#'+('DW'+(o._id||'').slice(-4).toUpperCase());
-    var cname = (o.customer && o.customer.name) || 'Customer';
-    var itemCount = (o.items && o.items.length) ? o.items.length + ' items' : '—';
-    var cls = 'status-pending', lbl = 'Pending';
-    if (['accepted','pickup_scheduled','picked_up','at_shop','processing','out_for_delivery','partially_delivered'].indexOf(o.status)>-1) {
-      cls = 'status-progress'; lbl = 'In Progress';
-    }
-    if (o.status === 'delivered') { cls = 'status-complete'; lbl = 'Completed'; }
-    if (o.status === 'rejected' || o.status === 'cancelled') { cls = 'status-pending'; lbl = 'Rejected'; }
-    return '<tr><td>'+dispId+'</td><td>'+cname+'</td><td>'+itemCount+'</td><td><span class="'+cls+'">'+lbl+'</span></td></tr>';
-  }).join('');
-}
-
-function renderHeroSummary() {
-  var todayOrders = allOrders.filter(function(o){
-    return o.createdAt && new Date(o.createdAt).toDateString() === new Date().toDateString();
-  });
-  var todayRevenue = todayOrders.reduce(function(a,o){ return a + (o.totalAmount||o.subtotal||0); }, 0);
-  var activeOrders = allOrders.filter(function(o){
-    return ['placed','accepted','pickup_scheduled','picked_up','at_shop','processing','out_for_delivery','partially_delivered'].indexOf(o.status) > -1;
-  }).length;
-  var totalEarnings = allOrders.filter(function(o){ return o.status === 'delivered'; }).reduce(function(a,o){
-    return a + Math.round((o.totalAmount||o.subtotal||0) * COMMISSION);
-  }, 0);
-  var liveRiders = allRiders.filter(function(r){ return r.approved && !r.revoked; }).length;
-
-  var heroRevenue = document.getElementById('heroRevenue');
-  var heroActiveOrders = document.getElementById('heroActiveOrders');
-  var heroTotalEarnings = document.getElementById('heroTotalEarnings');
-  var heroVendors = document.getElementById('heroVendors');
-  var heroRiders = document.getElementById('heroRiders');
-
-  if (heroRevenue) heroRevenue.textContent = '₹' + todayRevenue.toLocaleString('en-IN');
-  if (heroActiveOrders) heroActiveOrders.textContent = activeOrders;
-  if (heroTotalEarnings) heroTotalEarnings.textContent = '₹' + totalEarnings.toLocaleString('en-IN');
-  if (heroVendors) heroVendors.textContent = allVendors.length;
-  if (heroRiders) heroRiders.textContent = liveRiders;
 }
 
 // ─── BOOT ──────────────────────────────────────────────────────────────────
@@ -749,17 +367,28 @@ function bootDash() {
   document.getElementById('pgAuth').classList.remove('show');
   document.getElementById('pgDash').classList.add('show');
   loadAllData();
+  if (adminRefreshTimer) clearInterval(adminRefreshTimer);
+  adminRefreshTimer = setInterval(function(){ loadAllData(); }, 45000);
 }
 
 function loadAllData() {
+  lastAdminSyncAt = new Date();
   loadOrders();
   loadRiders();
   loadVendors();
   loadCustomers();
+  updateAdminSyncLabel();
 }
 
 function authHeader() {
   return { 'Authorization':'Bearer '+adminToken, 'Content-Type':'application/json' };
+}
+
+function updateAdminSyncLabel() {
+  var lbl = document.getElementById('liveLastRefresh');
+  if (!lbl) return;
+  if (!lastAdminSyncAt) { lbl.textContent = 'Snapshot · waiting'; return; }
+  lbl.textContent = 'Snapshot · updated ' + lastAdminSyncAt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 
 // ─── LOAD DATA ─────────────────────────────────────────────────────────────
@@ -770,8 +399,6 @@ function loadOrders() {
     allOrders = (d.success && d.orders) ? d.orders : [];
     renderAnalytics();
     renderOrders();
-    renderHeroSummary();
-    renderOrdersOverview();
   }).catch(function(){ allOrders = []; });
 }
 
@@ -788,12 +415,10 @@ function loadRiders() {
       console.log('Riders API error:', d.message);
     }
     renderRiders();
-    renderHeroSummary();
   }).catch(function(e){ 
     console.log('Riders fetch error:', e);
     allRiders = []; 
     renderRiders();
-    renderHeroSummary();
   });
 }
 
@@ -803,7 +428,6 @@ function loadVendors() {
   .then(function(d) {
     allVendors = (d.success && d.shops) ? d.shops : [];
     renderVendors();
-    renderHeroSummary();
   }).catch(function(){ allVendors = []; });
 }
 
@@ -815,7 +439,6 @@ function loadCustomers() {
       ? d.users.filter(function(u){ return u.role==='customer'; })
       : [];
     renderCustomers();
-    renderHeroSummary();
   }).catch(function(){ allCustomers = []; });
 }
 
@@ -1108,7 +731,6 @@ function filterRiders(f, btn) {
     btn.classList.add('on');
   }
   renderRiders();
-    renderHeroSummary();
 }
 
 function renderRiders() {
@@ -1346,87 +968,6 @@ function renderActivityStats() {
   document.getElementById('actVendors').textContent   = Object.keys(activeVendorIds).length;
   document.getElementById('actRiders').textContent    = activeRiders;
   document.getElementById('actOrders').textContent    = ordersInPeriod;
-}
-
-
-var overviewPeriod = 'today';
-
-function setOverviewPeriod(period, btn) {
-  overviewPeriod = period;
-  btn.parentElement.querySelectorAll('.period-tab').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
-  renderOrdersOverview();
-}
-
-function filterOrdersByOverviewPeriod(orders) {
-  var now = new Date();
-  return orders.filter(function(o) {
-    if (!o.createdAt) return false;
-    var d = new Date(o.createdAt);
-    if (overviewPeriod === 'today') return d.toDateString() === now.toDateString();
-    if (overviewPeriod === 'week') {
-      var wStart = new Date(now);
-      wStart.setDate(now.getDate() - now.getDay());
-      wStart.setHours(0,0,0,0);
-      return d >= wStart;
-    }
-    if (overviewPeriod === 'month') {
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    }
-    return true;
-  });
-}
-
-function renderOrdersOverview() {
-  var body = document.getElementById('ordersOverviewBody');
-  if (!body) return;
-  var rows = filterOrdersByOverviewPeriod(allOrders).slice().sort(function(a,b){
-    return new Date(b.createdAt||0) - new Date(a.createdAt||0);
-  }).slice(0,3);
-
-  if (!rows.length) {
-    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#8a7761">No recent orders</td></tr>';
-    return;
-  }
-
-  body.innerHTML = rows.map(function(o){
-    var dispId = '#'+('DW'+(o._id||'').slice(-4).toUpperCase());
-    var cname = (o.customer && o.customer.name) || 'Customer';
-    var itemCount = (o.items && o.items.length) ? o.items.length + ' items' : '—';
-    var cls = 'status-pending', lbl = 'Pending';
-    if (['accepted','pickup_scheduled','picked_up','at_shop','processing','out_for_delivery','partially_delivered'].indexOf(o.status)>-1) {
-      cls = 'status-progress'; lbl = 'In Progress';
-    }
-    if (o.status === 'delivered') { cls = 'status-complete'; lbl = 'Completed'; }
-    if (o.status === 'rejected' || o.status === 'cancelled') { cls = 'status-pending'; lbl = 'Rejected'; }
-    return '<tr><td>'+dispId+'</td><td>'+cname+'</td><td>'+itemCount+'</td><td><span class="'+cls+'">'+lbl+'</span></td></tr>';
-  }).join('');
-}
-
-function renderHeroSummary() {
-  var todayOrders = allOrders.filter(function(o){
-    return o.createdAt && new Date(o.createdAt).toDateString() === new Date().toDateString();
-  });
-  var todayRevenue = todayOrders.reduce(function(a,o){ return a + (o.totalAmount||o.subtotal||0); }, 0);
-  var activeOrders = allOrders.filter(function(o){
-    return ['placed','accepted','pickup_scheduled','picked_up','at_shop','processing','out_for_delivery','partially_delivered'].indexOf(o.status) > -1;
-  }).length;
-  var totalEarnings = allOrders.filter(function(o){ return o.status === 'delivered'; }).reduce(function(a,o){
-    return a + Math.round((o.totalAmount||o.subtotal||0) * COMMISSION);
-  }, 0);
-  var liveRiders = allRiders.filter(function(r){ return r.approved && !r.revoked; }).length;
-
-  var heroRevenue = document.getElementById('heroRevenue');
-  var heroActiveOrders = document.getElementById('heroActiveOrders');
-  var heroTotalEarnings = document.getElementById('heroTotalEarnings');
-  var heroVendors = document.getElementById('heroVendors');
-  var heroRiders = document.getElementById('heroRiders');
-
-  if (heroRevenue) heroRevenue.textContent = '₹' + todayRevenue.toLocaleString('en-IN');
-  if (heroActiveOrders) heroActiveOrders.textContent = activeOrders;
-  if (heroTotalEarnings) heroTotalEarnings.textContent = '₹' + totalEarnings.toLocaleString('en-IN');
-  if (heroVendors) heroVendors.textContent = allVendors.length;
-  if (heroRiders) heroRiders.textContent = liveRiders;
 }
 
 // ─── BOOT ──────────────────────────────────────────────────────────────────
