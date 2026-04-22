@@ -104,13 +104,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 .lb-open{background:#f0fdf4;color:var(--green)}
 .lb-closed{background:#f5f0e8;color:var(--slate)}
 .lb-duty{background:#fef9ec;color:#d97706}
-
-.brand-logo-wrap{display:flex;align-items:center;gap:10px}
-.brand-logo-auth{display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:14px}
-.brand-logo-auth svg{width:140px;height:auto;display:block}
-.brand-logo-mini svg{width:86px;height:auto;display:block}
-.brand-tagline{font-size:11px;letter-spacing:1px;color:var(--gold);text-align:center}
-
 </style>
 </head>
 <body>
@@ -118,11 +111,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 <!-- AUTH -->
 <div class="page show" id="pgAuth">
   <div class="auth-wrap">
-    
-<div class="brand-logo-auth">
-  
-</div>
-
+    <div class="auth-logo">Shu<span>chi</span></div>
     <div class="auth-badge">◆ Admin Control Panel</div>
     <div class="auth-err" id="authErr"></div>
     <div class="auth-card">
@@ -138,11 +127,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 <div class="page" id="pgDash">
   <div class="dash-header">
     <div class="dash-top">
-      
-<div class="dash-mark brand-logo-mini">
-  
-</div>
-
+      <div class="dash-mark">Shu<span>chi</span></div>
       <div class="admin-badge">ADMIN</div>
     </div>
     <div class="dash-greet" id="dashGreet">Good morning, Admin 👋</div>
@@ -160,7 +145,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 
     <!-- LIVE STATUS CARD -->
     <div class="card">
-      <div class="card-title">🟢 Live Status <span id="liveLastRefresh">Snapshot · Just now</span></div>
+      <div class="card-title">🟢 Live Status <span id="liveLastRefresh">Just now</span></div>
       <div class="stats-grid four" style="margin-bottom:10px">
         <div class="stat-box" style="border-color:#bbf7d0">
           <div class="stat-val green" id="liveShopsOpen">0</div>
@@ -183,7 +168,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
       <div id="liveRidersList" style="margin-top:8px"></div>
       <!-- Active shops list -->
       <div id="liveShopsList" style="margin-top:8px"></div>
-      <button onclick="refreshLiveStatus()" style="width:100%;margin-top:12px;padding:10px;background:var(--light);border:1px solid var(--border);border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;color:var(--slate)">🔄 Refresh Live Status</button><div style="font-size:0.72rem;color:var(--slate);margin-top:8px;text-align:center">Snapshot view auto-refreshes every 45 seconds</div>
+      <button onclick="refreshLiveStatus()" style="width:100%;margin-top:12px;padding:10px;background:var(--light);border:1px solid var(--border);border-radius:10px;font-family:DM Sans,sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;color:var(--slate)">🔄 Refresh Live Status</button>
     </div>
 
     <!-- DAILY LOGIN ACTIVITY CARD -->
@@ -248,17 +233,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
       <div class="stat-box"><div class="stat-val" id="totalOrderCount">0</div><div class="stat-lbl">Total Orders</div></div>
     </div>
   </div>
-
-  
-    <div class="card">
-      <div class="card-title">🚨 Ops Queue <span>Production flow</span></div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-val" id="stuckOrders">0</div><div class="stat-lbl">Stuck Orders</div></div>
-        <div class="stat-box"><div class="stat-val red" id="slaBreaches">0</div><div class="stat-lbl">SLA Breaches</div></div>
-      </div>
-      <div id="opsQueueWrap"><div class="empty">Loading ops queue...</div></div>
-    </div>
-
 
   <!-- ORDERS -->
   <div class="section" id="secOrders">
@@ -327,7 +301,7 @@ var allCustomers       = [];
 var currentRiderFilter = 'all';
 var currentOrderFilter = 'all';
 var currentRejectId    = null;
-var periods            = { platform:'hourly', vendor:'daily', customer:'weekly' };\nvar adminRefreshTimer   = null;\nvar lastAdminSyncAt     = null;
+var periods            = { platform:'hourly', vendor:'daily', customer:'weekly' };
 
 // ─── AUTH ──────────────────────────────────────────────────────────────────
 function showAuthErr(m) {
@@ -362,7 +336,6 @@ function doLogin() {
 }
 
 function doLogout() {
-  if (adminRefreshTimer) { clearInterval(adminRefreshTimer); adminRefreshTimer = null; }
   localStorage.removeItem('dw_admin_token');
   adminToken = null;
   allOrders = []; allRiders = []; allVendors = []; allCustomers = [];
@@ -378,53 +351,17 @@ function bootDash() {
   document.getElementById('pgAuth').classList.remove('show');
   document.getElementById('pgDash').classList.add('show');
   loadAllData();
-  if (adminRefreshTimer) clearInterval(adminRefreshTimer);
-  adminRefreshTimer = setInterval(function(){ loadAllData(); }, 45000);
 }
 
 function loadAllData() {
-  lastAdminSyncAt = new Date();
   loadOrders();
   loadRiders();
   loadVendors();
   loadCustomers();
-  loadOpsQueues();
-  updateAdminSyncLabel();
 }
 
 function authHeader() {
   return { 'Authorization':'Bearer '+adminToken, 'Content-Type':'application/json' };
-}
-
-function updateAdminSyncLabel() {
-  var lbl = document.getElementById('liveLastRefresh');
-  if (!lbl) return;
-  if (!lastAdminSyncAt) { lbl.textContent = 'Snapshot · waiting'; return; }
-  lbl.textContent = 'Snapshot · updated ' + lastAdminSyncAt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-}
-
-
-function loadOpsQueues() {
-  Promise.all([
-    fetch(API+'/api/admin/stuck-orders', { headers:authHeader() }).then(function(r){ return r.json(); }).catch(function(){ return { success:false, orders:[] }; }),
-    fetch(API+'/api/admin/sla-breaches', { headers:authHeader() }).then(function(r){ return r.json(); }).catch(function(){ return { success:false, breaches:[] }; })
-  ]).then(function(res){
-    var stuck = (res[0].success && res[0].orders) ? res[0].orders : [];
-    var breaches = (res[1].success && (res[1].breaches || res[1].orders)) ? (res[1].breaches || res[1].orders) : [];
-    var stuckEl = document.getElementById('stuckOrders');
-    var breachEl = document.getElementById('slaBreaches');
-    if (stuckEl) stuckEl.textContent = stuck.length;
-    if (breachEl) breachEl.textContent = breaches.length;
-    var wrap = document.getElementById('opsQueueWrap');
-    if (!wrap) return;
-    var rows = stuck.slice(0,5);
-    if (!rows.length) { wrap.innerHTML = '<div class="empty">No stuck orders</div>'; return; }
-    wrap.innerHTML = rows.map(function(o){
-      var shop = (o.shop && o.shop.name) || o.shopName || 'Shop';
-      var cust = (o.customer && o.customer.name) || 'Customer';
-      return '<div class="live-item"><span class="live-name">#'+String(o._id||'').slice(-6).toUpperCase()+' · '+shop+'</span><span class="live-meta">'+cust+' · '+(o.status||'')+'</span><span class="live-badge lb-closed">Action</span></div>';
-    }).join('');
-  });
 }
 
 // ─── LOAD DATA ─────────────────────────────────────────────────────────────
