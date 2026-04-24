@@ -408,9 +408,21 @@ function loadCustomers() {
   fetch(API+'/api/auth/users', { headers:authHeader() })
   .then(function(r){ return r.json(); })
   .then(function(d) {
-    allCustomers = (d.success && d.users)
-      ? d.users.filter(function(u){ return u.role==='customer'; })
-      : [];
+    if (d.success && d.users && d.users.length > 0) {
+      allCustomers = d.users.filter(function(u){ return u.role==='customer'; });
+    } else {
+      // Derive unique customers from orders (fallback when user API not available)
+      var seen = {}; allCustomers = [];
+      allOrders.forEach(function(o) {
+        if (o.customer && o.customer._id && !seen[o.customer._id]) {
+          seen[o.customer._id] = true;
+          allCustomers.push({
+            _id: o.customer._id, name: o.customer.name||'Customer',
+            phone: o.customer.phone||'—', role:'customer', createdAt: o.createdAt
+          });
+        }
+      });
+    }
     renderCustomers();
   }).catch(function(){ allCustomers = []; });
 }
@@ -656,7 +668,15 @@ function renderOrders() {
       +'<div style="background:var(--light);border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--ink)">₹'+gross+'</div><div style="font-size:0.6rem;color:var(--slate)">Customer Paid</div></div>'
       +'<div style="background:#f0fdf4;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--green)">₹'+payout+'</div><div style="font-size:0.6rem;color:var(--slate)">Vendor Gets</div></div>'
       +'<div style="background:#fef9ec;border-radius:8px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:var(--gold)">₹'+comm+'</div><div style="font-size:0.6rem;color:var(--slate)">Platform (15%)</div></div>'
-      +'</div></div>';
+      +'</div>'
+      +'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">'
+      +'<div style="font-size:0.72rem;margin-bottom:6px"><b>Status:</b> '+o.status+'</div>'
+      +(o.deliveryType?'<div style="font-size:0.72rem;margin-bottom:6px"><b>Service:</b> '+(o.deliveryType==='normal'?'Normal ('+o.normalSlot+' slot)':'Quick - Same day')+'</div>':'')
+      +(o.items&&o.items.length?'<div style="font-size:0.72rem;margin-bottom:6px"><b>Items:</b> '+o.items.map(function(it){return (it.quantity||1)+'x '+it.label+' ['+it.itemStatus+']';}).join(', ')+'</div>':'')
+      +(o.trips&&o.trips.length?'<div style="font-size:0.72rem;margin-bottom:6px"><b>Trips:</b> '+o.trips.map(function(t){return t.type+'->'+t.status;}).join(' | ')+'</div>':'')
+      +(o.statusHistory&&o.statusHistory.length?'<div style="font-size:0.72rem"><b>History:</b> '+o.statusHistory.map(function(h){return h.status;}).join(' > ')+'</div>':'')
+      +'</div>'
+      +'</div>';
   }).join('');
 }
 
