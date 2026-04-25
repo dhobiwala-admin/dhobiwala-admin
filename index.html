@@ -290,7 +290,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
 
 <script>
 // ─── CONFIG ────────────────────────────────────────────────────────────────
-var API        = window.SHUCHI_API_URL || localStorage.getItem('SHUCHI_API_URL') || 'https://shuchi-backend.onrender.com';
+var API        = 'https://dhobiwala-backend.onrender.com';
 var COMMISSION = 0.15;
 
 // ─── STATE ─────────────────────────────────────────────────────────────────
@@ -406,7 +406,7 @@ function loadVendors() {
 }
 
 function loadCustomers() {
-  fetch(API+'/api/admin/customers', { headers:authHeader() })
+  fetch(API+'/api/auth/users', { headers:authHeader() })
   .then(function(r){ return r.json(); })
   .then(function(d) {
     if (d.success && d.users && d.users.length > 0) {
