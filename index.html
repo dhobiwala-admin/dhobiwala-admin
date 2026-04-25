@@ -116,7 +116,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
     <div class="auth-err" id="authErr"></div>
     <div class="auth-card">
       <div class="auth-field"><label class="auth-label">Admin Email</label><input class="auth-input" type="email" id="aEmail" placeholder="admin@shuchi.in"/></div>
-      <div class="auth-field"><label class="auth-label">Password</label><input class="auth-input" type="password" id="aPass" placeholder="••••••••"/></div>
+      <div class="auth-field"><label class="auth-label">Password</label><div style="position:relative"><input class="auth-input" type="password" id="aPass" placeholder="••••••••" style="padding-right:44px" onkeydown="if(event.key==='Enter')doLogin()"/><button type="button" onclick="toggleEye('aPass',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:#888">👁</button></div></div>
       <button class="auth-btn" id="btnLogin" onclick="doLogin()">Access Admin Panel →</button>
     </div>
     <div class="auth-restrict">Restricted access — authorised personnel only</div>
@@ -135,12 +135,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);max-width:430px;ma
   <div class="nav-tabs">
     <button class="nav-tab on" onclick="showSection('secAnalytics',this)">📊 Analytics</button>
     <button class="nav-tab" onclick="showSection('secOrders',this)">📦 Orders</button>
-    <button class="nav-tab" onclick="showSection('secVendors',this)">🏪 Vendors</button>
-    <button class="nav-tab" onclick="showSection('secRiders',this)">🏍 Riders</button>
+    <button class="nav-tab" onclick="showSection('secVendors',this)">🏪 Vendors <span id="vendorPendingBadge" style="display:none;background:#ef4444;color:#fff;border-radius:999px;font-size:0.65rem;padding:2px 6px;margin-left:4px;font-weight:800">0</span></button>
+    <button class="nav-tab" onclick="showSection('secRiders',this)">🏍 Riders <span id="riderPendingBadge" style="display:none;background:#ef4444;color:#fff;border-radius:999px;font-size:0.65rem;padding:2px 6px;margin-left:4px;font-weight:800">0</span></button>
     <button class="nav-tab" onclick="showSection('secCustomers',this)">👤 Customers</button>
   </div>
 
   <!-- ANALYTICS -->
+  
+  <!-- PENDING APPROVAL BANNER -->
+  <div id="pendingBanner" style="display:none;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border-radius:16px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div>
+      <div style="font-weight:800;font-size:0.95rem">⚠️ Pending Approvals</div>
+      <div id="pendingBannerText" style="font-size:0.78rem;opacity:0.85;margin-top:2px">Loading...</div>
+    </div>
+    <button onclick="checkPendingApprovals()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;cursor:pointer;font-size:0.78rem">Review Now</button>
+  </div>
+
   <div class="section show" id="secAnalytics">
 
     <!-- LIVE STATUS CARD -->
@@ -311,6 +321,14 @@ function showAuthErr(m) {
   e.style.display = 'block';
 }
 
+
+function toggleEye(fieldId, btn) {
+  var f = document.getElementById(fieldId);
+  if (!f) return;
+  f.type = f.type === 'password' ? 'text' : 'password';
+  btn.textContent = f.type === 'password' ? '👁' : '🙈';
+}
+
 function doLogin() {
   var email = document.getElementById('aEmail').value.trim();
   var pass  = document.getElementById('aPass').value.trim();
@@ -389,6 +407,7 @@ function loadRiders() {
       console.log('Riders API error:', d.message);
     }
     renderRiders();
+    checkPendingApprovals();
   }).catch(function(e){ 
     console.log('Riders fetch error:', e);
     allRiders = []; 
@@ -683,6 +702,10 @@ function renderOrders() {
 
 // ─── VENDORS ───────────────────────────────────────────────────────────────
 function renderVendors() {
+  // Show pending badge
+  var pendingV = allVendors.filter(function(v){ return !v.isApproved; });
+  var vb = document.getElementById('vendorPendingBadge');
+  if (vb) { vb.textContent=pendingV.length; vb.style.display=pendingV.length?'inline':'none'; }
   if (!allVendors.length) {
     document.getElementById('vendorsList').innerHTML = '<div class="empty">No vendors yet</div>';
     return;
@@ -1012,6 +1035,41 @@ function loadAnalytics(period) {
     document.getElementById('adminResults').innerHTML = html;
   }).catch(function(){});
 }
+
+// ── PENDING APPROVAL CHECKER ──────────────────────────────────────────────────
+function checkPendingApprovals() {
+  var pendingRiders  = allRiders.filter(function(r){ return !r.approved && !r.rejected && !r.revoked; });
+  var pendingVendors = allVendors.filter(function(v){ return !v.isApproved; });
+
+  // Update badges
+  var rb = document.getElementById('riderPendingBadge');
+  var vb = document.getElementById('vendorPendingBadge');
+  if (rb) { rb.textContent = pendingRiders.length; rb.style.display = pendingRiders.length ? 'inline' : 'none'; }
+  if (vb) { vb.textContent = pendingVendors.length; vb.style.display = pendingVendors.length ? 'inline' : 'none'; }
+
+  // Update banner
+  var banner = document.getElementById('pendingBanner');
+  var total  = pendingRiders.length + pendingVendors.length;
+  if (banner) {
+    if (total > 0) {
+      banner.style.display = 'flex';
+      var parts = [];
+      if (pendingRiders.length)  parts.push(pendingRiders.length  + ' rider application' + (pendingRiders.length>1?'s':'') + ' waiting');
+      if (pendingVendors.length) parts.push(pendingVendors.length + ' vendor shop'       + (pendingVendors.length>1?'s':'') + ' waiting');
+      document.getElementById('pendingBannerText').textContent = parts.join(' · ');
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  // If there are pending items, navigate to riders or vendors tab
+  if (total > 0) {
+    if (pendingRiders.length)  showSection('secRiders',  document.querySelector('[onclick*=secRiders]'));
+    else if (pendingVendors.length) showSection('secVendors', document.querySelector('[onclick*=secVendors]'));
+  }
+}
+
+
 </script>
 </body>
 </html>
