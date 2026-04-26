@@ -19,7 +19,7 @@ body{font-family:'DM Sans',sans-serif;background:#f5f1ea;color:#1a1108;max-width
 .field label{display:block;font-size:0.72rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
 .finput{width:100%;padding:12px 14px;border:1.5px solid #ddd6c8;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:#1a1108;background:#fff;outline:none}
 .finput:focus{border-color:#e8a020}
-.pw-wrap{position:relative}
+.pw-wrap{position:relative;display:block}
 .pw-wrap .finput{padding-right:46px}
 .eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#aaa;padding:4px}
 .err{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:10px 14px;font-size:0.8rem;color:#dc2626;margin-bottom:12px;display:none}
@@ -109,6 +109,9 @@ body{font-family:'DM Sans',sans-serif;background:#f5f1ea;color:#1a1108;max-width
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1108;color:#fff;padding:12px 24px;border-radius:30px;font-size:0.8rem;font-weight:600;z-index:9999;opacity:0;transition:all 0.3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 </head>
 <body>
 <div id="toastEl" class="toast"></div>
@@ -117,6 +120,7 @@ body{font-family:'DM Sans',sans-serif;background:#f5f1ea;color:#1a1108;max-width
   <div class="auth-box">
     <div class="auth-logo">Shu<span>chi</span></div>
     <div class="auth-role">Admin Panel</div>
+    <div style="font-size:0.6rem;color:#ccc;margin-bottom:12px">v3.1 · 26-Apr-2026</div>
     <div id="authErr" class="err"></div>
     <div class="field">
       <label>Admin Email</label>
