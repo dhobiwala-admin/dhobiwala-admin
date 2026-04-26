@@ -512,13 +512,13 @@ function renderRiders(riders){
       +'<div style="border-top:1px solid #f5f1ea;margin-top:10px;padding-top:10px">'
       +'<div style="font-size:0.62rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Earnings Breakdown</div>'
       +'<div style="display:flex;gap:6px">'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadRiderEarn(''+r._id+'','today',this)">Today</button>'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadRiderEarn(''+r._id+'','week',this)">Week</button>'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadRiderEarn(''+r._id+'','month',this)">Month</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+r._id+'" data-p="today" onclick="loadRiderEarn(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Today</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+r._id+'" data-p="week" onclick="loadRiderEarn(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Week</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+r._id+'" data-p="month" onclick="loadRiderEarn(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Month</button>'
       +'</div><div id="re_'+r._id+'" style="margin-top:8px"></div></div>'
       +'<div class="rcard-btns" style="margin-top:10px">'
-      +(!r.approved&&!r.revoked?'<button class="btn btn-grn btn-sm" onclick="approveRider(''+r._id+'')">✓ Approve</button>':'')
-      +(r.approved&&!r.revoked?'<button class="btn btn-red btn-sm" onclick="revokeRider(''+r._id+'')">Revoke</button>':'')
+      +(!r.approved&&!r.revoked?'<button class="btn btn-grn btn-sm" data-id="'+r._id+'" onclick="approveRider(this.getAttribute(\"data-id\"))">✓ Approve</button>':'')
+      +(r.approved&&!r.revoked?'<button class="btn btn-red btn-sm" data-id="'+r._id+'" onclick="revokeRider(this.getAttribute(\"data-id\"))">Revoke</button>':'')
       +'</div></div>';
   }).join('');
   showResults(html);
@@ -561,12 +561,12 @@ function renderVendors(vendors){
       +'<div style="border-top:1px solid #f5f1ea;margin-top:10px;padding-top:10px">'
       +'<div style="font-size:0.62rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Order Stats</div>'
       +'<div style="display:flex;gap:6px">'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadVendorStats(''+v._id+'','today',this)">Today</button>'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadVendorStats(''+v._id+'','week',this)">Week</button>'
-      +'<button class="btn btn-out btn-sm" style="flex:1" onclick="loadVendorStats(''+v._id+'','month',this)">Month</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+v._id+'" data-p="today" onclick="loadVendorStats(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Today</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+v._id+'" data-p="week" onclick="loadVendorStats(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Week</button>'
+      +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+v._id+'" data-p="month" onclick="loadVendorStats(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Month</button>'
       +'</div><div id="vs_'+v._id+'" style="margin-top:8px"></div></div>'
       +'<div class="rcard-btns" style="margin-top:10px">'
-      +(!v.isApproved?'<button class="btn btn-grn btn-sm" onclick="approveVendor(''+v._id+'')">✓ Approve</button>':'<span style="font-size:0.75rem;color:#16a34a;font-weight:700">✅ Approved</span>')
+      +(!v.isApproved?'<button class="btn btn-grn btn-sm" data-id="'+v._id+'" onclick="approveVendor(this.getAttribute(\"data-id\"))">✓ Approve</button>':'<span style="font-size:0.75rem;color:#16a34a;font-weight:700">✅ Approved</span>')
       +'</div></div>';
   }).join('');
   showResults(html);
