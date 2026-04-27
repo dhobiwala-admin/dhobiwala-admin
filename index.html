@@ -1019,12 +1019,24 @@ function loadRiderEarn(riderId, period, btn){
       });
     });
     var el=document.getElementById('re_'+riderId); if(!el) return;
-    el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px">'
-      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#e8a020">₹'+(qE+nE)+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Total</div></div>'
+    // Cash collected by rider this week from COD deliveries
+    var codOrders = filtered.filter(function(o){ return o.deliveryType==='quick'; });
+    var cashCollected = codOrders.reduce(function(a,o){ return a+(o.totalAmount||0); },0);
+    var cashOwed = Math.max(0, cashCollected - (qE+nE));
+
+    el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px">'
+      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#e8a020">₹'+(qE+nE)+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Earnings</div></div>'
       +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem">₹'+qE+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">⚡ Quick</div></div>'
       +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem">₹'+nE+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">🗓 Normal</div></div>'
       +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem">'+(qT+nT)+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Trips</div></div>'
-      +'</div>';
+      +'</div>'
+      +(period==='week'?'<div style="background:#1a1108;border-radius:10px;padding:10px 12px">'
+      +'<div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">💵 Cash Settlement This Week</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)"><span style="color:rgba(255,255,255,0.5)">Cash collected from customers</span><span style="color:#fff;font-weight:700">₹'+cashCollected+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)"><span style="color:rgba(255,255,255,0.5)">Rider trip earnings (kept)</span><span style="color:#4ade80;font-weight:700">-₹'+(qE+nE)+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.82rem;padding:6px 0;margin-top:2px"><span style="color:#f87171;font-weight:700">Must transfer to Shuchi</span><span style="color:#f87171;font-family:Syne,sans-serif;font-weight:800;font-size:1rem">₹'+cashOwed+'</span></div>'
+      +(cashOwed>0?'<div style="background:rgba(220,38,38,0.15);border-radius:8px;padding:6px 10px;margin-top:6px;font-size:0.68rem;color:rgba(255,255,255,0.4)">Due by Sunday · Call rider if overdue</div>':'<div style="background:rgba(74,222,128,0.1);border-radius:8px;padding:6px 10px;margin-top:6px;font-size:0.68rem;color:rgba(74,222,128,0.6)">✓ No cash settlement due</div>')
+      +'</div>':'');
   }).catch(function(){});
 }
 
@@ -1068,11 +1080,19 @@ function loadVendorStats(shopId, period, btn){
     var qO=orders.filter(function(o){return o.deliveryType==='quick';}).length;
     var nO=orders.filter(function(o){return o.deliveryType==='normal';}).length;
     var el=document.getElementById('vs_'+shopId); if(!el) return;
-    el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px">'
+    var fee    = Math.round(revenue*0.15);
+    var payout = revenue - fee;
+    el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:8px">'
       +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem">'+orders.length+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Total</div></div>'
-      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#16a34a">'+delivered.length+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Done</div></div>'
+      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#16a34a">'+delivered.length+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Delivered</div></div>'
       +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem">'+qO+'⚡ '+nO+'🗓</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Q vs N</div></div>'
-      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#e8a020">₹'+revenue+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Revenue</div></div>'
+      +'<div style="background:#f5f1ea;border-radius:9px;padding:8px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:0.9rem;color:#e8a020">₹'+revenue+'</div><div style="font-size:0.58rem;color:#888;margin-top:1px">Gross</div></div>'
+      +'</div>'
+      +'<div style="background:#1a1108;border-radius:10px;padding:10px 12px">'
+      +'<div style="font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">Payout Breakdown</div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)"><span style="color:rgba(255,255,255,0.5)">Gross Revenue</span><span style="color:#fff;font-weight:700">₹'+revenue+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.75rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.08)"><span style="color:rgba(255,255,255,0.5)">Platform Fee (15%)</span><span style="color:#f87171;font-weight:700">-₹'+fee+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:0.82rem;padding:6px 0;margin-top:2px"><span style="color:#e8a020;font-weight:700">Vendor Payout (85%)</span><span style="color:#e8a020;font-family:Syne,sans-serif;font-weight:800;font-size:1rem">₹'+payout+'</span></div>'
       +'</div>';
   }).catch(function(){});
 }
