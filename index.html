@@ -224,6 +224,44 @@ function doLogin(){
   });
 }
 
+
+function adminResetCustomer(phone, name) {
+  adminResetPassword(phone, name, 'customer');
+}
+
+function adminResetRider(id) {
+  var r = allRiders.find(function(r){ return r._id===id; });
+  if (!r) { toast('Rider not found'); return; }
+  adminResetPassword(r.phone, r.name, 'delivery');
+}
+
+function adminResetVendor(id) {
+  var v = allVendors.find(function(v){ return v._id===id; });
+  if (!v) { toast('Vendor not found'); return; }
+  var phone = v.owner && v.owner.phone ? v.owner.phone : '';
+  var name  = v.name;
+  adminResetPassword(phone, name, 'vendor');
+}
+
+function adminResetPassword(phone, name, role) {
+  if (!confirm('Reset password for ' + name + '? A temporary password will be generated.')) return;
+  fetch(API + '/api/auth/forgot-password', {
+    method: 'POST',
+    headers: authHdr(),
+    body: JSON.stringify({ phone: phone, role: role })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.success) {
+      toast('✅ Temp password: ' + d.tempPass + ' — Share with ' + name);
+      alert('Temporary password for ' + name + ':\n\n' + d.tempPass + '\n\nShare this with the user. They can change it after login.');
+    } else {
+      toast(d.message || 'Error resetting password');
+    }
+  })
+  .catch(function(){ toast('Network error'); });
+}
+
 function doLogout(){
   clearAuth();
   document.getElementById('pgDash').classList.remove('show');
@@ -501,7 +539,9 @@ function renderRiders(riders){
       :'<span style="background:#f5f1ea;color:#888;padding:2px 8px;border-radius:20px;font-size:0.62rem;font-weight:700;margin-left:6px">OFF</span>';
     return '<div class="rcard">'
       +'<div class="rcard-top"><div><div class="rcard-name">'+r.name+duty+'</div>'
-      +'<div class="rcard-meta">📱 '+r.phone+' · 🛵 '+r.vehicle+' · 📍 '+r.area+'</div></div>'
+      +'<div class="rcard-meta">📱 '+r.phone+' · 🛵 '+r.vehicle+' · 📍 '+r.area+'</div>'
+      +(r.dateOfBirth?'<div class="rcard-meta">🎂 DOB: '+r.dateOfBirth+'</div>':'')
+      +'</div>'
       +'<span class="badge '+sc+'">'+s+'</span></div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0">'
       +'<div style="background:#f5f1ea;border-radius:10px;padding:9px;text-align:center"><div style="font-family:Syne,sans-serif;font-weight:800;font-size:1rem">'+(r.totalTrips||0)+'</div><div style="font-size:0.6rem;color:#888;margin-top:1px">Total Trips</div></div>'
@@ -518,7 +558,9 @@ function renderRiders(riders){
       +'</div><div id="re_'+r._id+'" style="margin-top:8px"></div></div>'
       +'<div class="rcard-btns" style="margin-top:10px">'
       +(!r.approved&&!r.revoked?'<button class="btn btn-grn btn-sm" data-id="'+r._id+'" onclick="approveRider(this.getAttribute(\"data-id\"))">✓ Approve</button>':'')
-      +(r.approved&&!r.revoked?'<button class="btn btn-red btn-sm" data-id="'+r._id+'" onclick="revokeRider(this.getAttribute(\"data-id\"))">Revoke</button>':'')
+      +'<button class="btn btn-out btn-sm" data-id="'+r._id+'" onclick="adminResetRider(this.dataset.id)">🔒 Reset Password</button>'
+      +'</div></div>';
+      +'</div></div>';
       +'</div></div>';
   }).join('');
   showResults(html);
@@ -566,7 +608,12 @@ function renderVendors(vendors){
       +'<button class="btn btn-out btn-sm" style="flex:1" data-id="'+v._id+'" data-p="month" onclick="loadVendorStats(this.getAttribute(\"data-id\"),this.getAttribute(\"data-p\"),this)">Month</button>'
       +'</div><div id="vs_'+v._id+'" style="margin-top:8px"></div></div>'
       +'<div class="rcard-btns" style="margin-top:10px">'
-      +(!v.isApproved?'<button class="btn btn-grn btn-sm" data-id="'+v._id+'" onclick="approveVendor(this.getAttribute(\"data-id\"))">✓ Approve</button>':'<span style="font-size:0.75rem;color:#16a34a;font-weight:700">✅ Approved</span>')
+      +'<button class="btn btn-out btn-sm" data-id="'+v._id+'" onclick="adminResetVendor(this.dataset.id)">🔒 Reset Password</button>'
+      +'</div></div>';
+      +'</div></div>';
+      +'<button class="btn btn-out btn-sm" data-id="'+v._id+'" onclick="adminResetVendor(this.dataset.id)">🔒 Reset Password</button>'
+      +'</div></div>';
+      +'</div></div>';
       +'</div></div>';
   }).join('');
   showResults(html);
