@@ -663,15 +663,18 @@ function renderAlerts() {
   if (stuck.length) {
     html += '<h3 style="font-size:14px;color:#666;margin:8px 0;letter-spacing:1px;text-transform:uppercase">🚨 Stuck Orders (' + stuck.length + ')</h3>';
     html += stuck.map(function(o){
-      const sev = (o.stuckAlert && o.stuckAlert.stuckSeverity) || "warning";
-      const since = o.stuckAlert && o.stuckAlert.stuckSince;
+      // Backend /stuck endpoint returns flattened fields (severity, reason, stuckSince)
+      // not nested under stuckAlert. Support both shapes for safety.
+      const sev    = o.severity   || (o.stuckAlert && o.stuckAlert.stuckSeverity) || "warning";
+      const reason = o.reason     || (o.stuckAlert && o.stuckAlert.stuckReason)   || "Stuck";
+      const since  = o.stuckSince || (o.stuckAlert && o.stuckAlert.stuckSince)    || null;
       return (
         '<div class="card" data-order-id="' + o._id + '">' +
           '<div class="card-hdr">' +
             '<div>' +
               '<div class="card-ttl">#' + escHtml(o.orderNumber || "") + ' <span class="pill ' + escHtml(sev) + '">' + escHtml(sev.toUpperCase()) + '</span></div>' +
               '<div class="card-meta">' +
-                '<div class="row">📋 ' + escHtml((o.stuckAlert && o.stuckAlert.stuckReason) || "Stuck") + '</div>' +
+                '<div class="row">📋 ' + escHtml(reason) + '</div>' +
                 '<div class="row">⏰ Stuck since: ' + fmtTime(since) + '</div>' +
                 '<div class="row">📊 Status: ' + escHtml(o.status || "—") + '</div>' +
               '</div>' +
