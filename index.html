@@ -213,6 +213,7 @@
 <div id="loginScreen" class="login-wrap">
   <div class="login-card">
     <div class="brand">Shu<span class="accent">chi</span></div>
+    <div style="font-family:serif;font-size:13px;color:#666;letter-spacing:1px;margin:4px 0">शुचिता सर्वदा</div>
     <h2>Admin Panel <span class="dev-badge">DEV</span></h2>
     <div class="v">v4.0 · Backend: dev</div>
     <div id="loginErr"></div>
@@ -254,6 +255,8 @@
     <div class="tab active" data-tab="vendors" onclick="switchTab('vendors')">🏪 Vendors <span id="vendorBadge" class="badge" style="display:none">0</span></div>
     <div class="tab" data-tab="customers" onclick="switchTab('customers')">👤 Customers</div>
     <div class="tab" data-tab="ratings" onclick="switchTab('ratings')">⭐ Ratings</div>
+    <div class="tab" data-tab="analytics" onclick="switchTab('analytics')">📈 Analytics</div>
+    <div class="tab" data-tab="rankings" onclick="switchTab('rankings')">🏆 Top</div>
   </div>
 
   <div id="filterBar" class="filters"></div>
@@ -284,7 +287,9 @@ const API = "https://dhobiwala-backend-dev.onrender.com";
 let token = localStorage.getItem("admin_token") || "";
 let activeTab = "vendors";
 let activeFilter = "all";
-let cache = { vendors: [], riders: [], orders: [], customers: [], stuck: [], escalations: [], ratings: [], ratingStats: null };
+let cache = { vendors: [], riders: [], orders: [], customers: [], stuck: [], escalations: [], ratings: [], ratingStats: null, analytics: null, rankings: null };
+let analyticsPeriod = "daily";
+let rankingsPeriod  = "weekly";
 let socket = null;
 let pollTimer = null;
 let modalContext = null; // { orderId } when modal is showing an order
@@ -615,6 +620,20 @@ async function loadRatings() {
   } catch (e) { console.error("loadRatings", e); }
 }
 
+async function loadAnalytics() {
+  try {
+    const r = await api("/api/admin/analytics?period=" + encodeURIComponent(analyticsPeriod));
+    if (r && r.success) cache.analytics = r;
+  } catch (e) { console.error("loadAnalytics", e); cache.analytics = null; }
+}
+
+async function loadRankings() {
+  try {
+    const r = await api("/api/admin/rankings?period=" + encodeURIComponent(rankingsPeriod));
+    if (r && r.success) cache.rankings = r;
+  } catch (e) { console.error("loadRankings", e); cache.rankings = null; }
+}
+
 // ═══════════════════════════════ TABS / FILTER ═══════════════════════════════
 function switchTab(t) {
   activeTab = t;
@@ -625,6 +644,8 @@ function switchTab(t) {
   if (t === "orders"    && cache.orders.length === 0)   loadOrders().then(renderTab);
   else if (t === "customers" && cache.customers.length === 0) loadCustomers().then(renderTab);
   else if (t === "ratings"   && !cache.ratingStats)      loadRatings().then(renderTab);
+  else if (t === "analytics" && !cache.analytics)        loadAnalytics().then(renderTab);
+  else if (t === "rankings"  && !cache.rankings)         loadRankings().then(renderTab);
   else if (t === "alerts")                              { refreshAlerts(); renderTab(); }
   else renderTab();
 }
@@ -651,6 +672,8 @@ function renderTab() {
   if (activeTab === "orders")    return renderOrders();
   if (activeTab === "customers") return renderCustomers();
   if (activeTab === "ratings")   return renderRatings();
+  if (activeTab === "analytics") return renderAnalytics();
+  if (activeTab === "rankings")  return renderRankings();
 }
 
 function setFilters(filterDefs) {
@@ -1041,6 +1064,143 @@ function renderRatings() {
     }).join("");
   }
   html += '</div>';
+
+  $("content").innerHTML = html;
+}
+
+// ── ANALYTICS TAB (P&L #40) ───────────────────────────────────────────────
+function renderAnalytics() {
+  setFilters([
+    { value: "daily",   label: "Today" },
+    { value: "weekly",  label: "Last 7 days" },
+    { value: "monthly", label: "Last 30 days" },
+  ]);
+  // Hijack filter handler so click changes period (filter buttons reused as period switcher)
+  document.querySelectorAll('#filterBar .filter').forEach(function(el){
+    el.classList.toggle("active", el.dataset.filter === analyticsPeriod);
+    el.onclick = function() {
+      analyticsPeriod = el.dataset.filter;
+      cache.analytics = null;
+      loadAnalytics().then(renderTab);
+    };
+  });
+
+  if (!cache.analytics) {
+    $("content").innerHTML = '<div class="loading">Loading analytics…</div>';
+    return;
+  }
+  const a = cache.analytics.summary || {};
+  const periodLabel = { daily: "Today", weekly: "Last 7 days", monthly: "Last 30 days" }[analyticsPeriod] || analyticsPeriod;
+
+  // INR formatter — easy to read large numbers
+  function rupees(n) {
+    n = Number(n) || 0;
+    return "₹" + n.toLocaleString("en-IN");
+  }
+
+  let html = '<div class="stat-tile">' +
+    '<h4>📊 Period: ' + escHtml(periodLabel) + '</h4>' +
+    '<div class="top-list">' +
+      '<div class="row"><span>Total orders</span><b>' + (a.totalOrders || 0) + '</b></div>' +
+      '<div class="row"><span>Delivered orders</span><b>' + (a.deliveredOrders || 0) + '</b></div>' +
+    '</div>' +
+  '</div>';
+
+  // Money flow
+  html += '<div class="stat-tile">' +
+    '<h4>💰 Money flow</h4>' +
+    '<div class="top-list">' +
+      '<div class="row"><span>Total revenue (delivered)</span><b>' + rupees(a.totalRevenue) + '</b></div>' +
+      '<div class="row"><span>Vendor payout (85%)</span><b>' + rupees(a.vendorPayout) + '</b></div>' +
+      '<div class="row"><span>Platform earnings (15%)</span><b>' + rupees(a.platformEarnings) + '</b></div>' +
+      '<div class="row"><span>Cashback given to customers</span><b style="color:#c2410c">−' + rupees(a.totalCashbackGiven) + '</b></div>' +
+      '<div class="row"><span>Rider payout (admin-paid)</span><b style="color:#c2410c">−' + rupees(a.totalRiderPayout) + '</b></div>' +
+    '</div>' +
+  '</div>';
+
+  // Net P&L summary
+  const netClr = (a.netProfit || 0) >= 0 ? "#1a7f3d" : "#c53030";
+  html += '<div class="stat-tile" style="background:linear-gradient(135deg,#fff7ed,#fed7aa);border:1px solid #fdba74">' +
+    '<h4>📈 Net Profit / Loss</h4>' +
+    '<div style="font-size:32px;font-weight:800;color:' + netClr + ';text-align:center;padding:12px 0">' + rupees(a.netProfit) + '</div>' +
+    '<div style="font-size:12px;color:#666;text-align:center">Platform earnings − Cashback − Rider payout</div>' +
+  '</div>';
+
+  $("content").innerHTML = html;
+}
+
+// ── TOP RANKINGS TAB (#41) ────────────────────────────────────────────────
+function renderRankings() {
+  setFilters([
+    { value: "daily",   label: "Today" },
+    { value: "weekly",  label: "Last 7 days" },
+    { value: "monthly", label: "Last 30 days" },
+    { value: "yearly",  label: "Last year" },
+  ]);
+  document.querySelectorAll('#filterBar .filter').forEach(function(el){
+    el.classList.toggle("active", el.dataset.filter === rankingsPeriod);
+    el.onclick = function() {
+      rankingsPeriod = el.dataset.filter;
+      cache.rankings = null;
+      loadRankings().then(renderTab);
+    };
+  });
+
+  if (!cache.rankings) {
+    $("content").innerHTML = '<div class="loading">Loading rankings…</div>';
+    return;
+  }
+  const r = cache.rankings;
+  function rupees(n) { return "₹" + (Number(n) || 0).toLocaleString("en-IN"); }
+
+  let html = "";
+
+  // Top customers — by order count
+  if (r.topCustomers && r.topCustomers.length) {
+    html += '<div class="stat-tile">' +
+      '<h4>👤 Top customers (by orders)</h4>' +
+      '<div class="top-list">' +
+        r.topCustomers.map(function(c, i){
+          return '<div class="row">' +
+            '<span><b>' + (i+1) + '.</b> ' + escHtml(c.name || "—") + ' <small style="color:#999">' + escHtml(c.phone || "") + '</small></span>' +
+            '<span>' + c.count + ' orders · ' + rupees(c.spent) + '</span>' +
+          '</div>';
+        }).join("") +
+      '</div>' +
+    '</div>';
+  }
+
+  // Top vendors — by order count
+  if (r.topVendors && r.topVendors.length) {
+    html += '<div class="stat-tile">' +
+      '<h4>🏪 Top vendors (by orders)</h4>' +
+      '<div class="top-list">' +
+        r.topVendors.map(function(v, i){
+          return '<div class="row">' +
+            '<span><b>' + (i+1) + '.</b> ' + escHtml(v.name || "—") + ' <small style="color:#999">' + escHtml(v.area || "") + '</small></span>' +
+            '<span>' + v.count + ' orders · ' + rupees(v.revenue) + '</span>' +
+          '</div>';
+        }).join("") +
+      '</div>' +
+    '</div>';
+  }
+
+  // Top riders — by trip count
+  if (r.topRiders && r.topRiders.length) {
+    html += '<div class="stat-tile">' +
+      '<h4>🛵 Top riders (by trips)</h4>' +
+      '<div class="top-list">' +
+        r.topRiders.map(function(rd, i){
+          return '<div class="row">' +
+            '<span><b>' + (i+1) + '.</b> ' + escHtml(rd.name || "—") + ' <small style="color:#999">' + escHtml(rd.phone || "") + '</small></span>' +
+            '<span>' + rd.count + ' trips · ' + rupees(rd.earned) + '</span>' +
+          '</div>';
+        }).join("") +
+      '</div>' +
+    '</div>';
+  }
+
+  if (!html) html = '<div class="empty">No data for this period yet.</div>';
 
   $("content").innerHTML = html;
 }
