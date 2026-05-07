@@ -424,8 +424,33 @@ function setupSocket() {
 
   // Order events
   socket.on("order_cancelled", function (p) { onAlertEvent(p, "❌ Order cancelled: " + (p.orderNumber || ""), p.reason || "", "critical"); });
-  socket.on("order_rated",     function (p) { /* silent — just refresh ratings on demand */ });
-  socket.on("order_update",    function ()  { /* silent — let polling pick it up */ });
+
+  // Live order lifecycle updates — refresh the Orders tab if it's currently visible.
+  // Also refresh the timeline modal if it's showing the order that just changed.
+  socket.on("order_update", function (payload) {
+    if (!payload) return;
+    // If the timeline modal is open for this order, refresh it
+    if (modalContext && modalContext.orderId && payload.orderId &&
+        String(modalContext.orderId) === String(payload.orderId)) {
+      openTimeline(payload.orderId);
+    }
+    // If the user is on the Orders tab, refresh in-place
+    if (activeTab === "orders") {
+      loadOrders().then(renderTab);
+    }
+    // Update live stats (active orders count may have changed)
+    loadAll();
+  });
+
+  // Live rating events — refresh ratings tab if visible, otherwise mark stale
+  socket.on("order_rated", function (payload) {
+    if (!payload) return;
+    if (activeTab === "ratings") {
+      loadRatings().then(renderTab);
+    }
+    // Brief acknowledgement so admin knows a rating just came in
+    toast("⭐ New rating: " + (payload.orderNumber || "order"), "ok");
+  });
 }
 
 function setLive(connected) {
