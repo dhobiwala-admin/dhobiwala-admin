@@ -796,25 +796,58 @@ function renderAlerts() {
 
 // ── ORDERS TAB ────────────────────────────────────────────────────────────
 function renderOrders() {
+  // Compute count of orders awaiting pickup rider for the filter badge
+  const awaitingCount = cache.orders.filter(function(o) {
+    if (!["accepted", "vendor_accepted"].includes(o.status)) return false;
+    const pickup = (o.trips || []).find(function(t){ return t.type === "pickup"; });
+    return pickup && !pickup.riderId;
+  }).length;
+
   setFilters([
-    { value: "all",       label: "All" },
-    { value: "active",    label: "Active" },
-    { value: "delivered", label: "Delivered" },
-    { value: "cancelled", label: "Cancelled" },
+    { value: "all",        label: "All" },
+    { value: "active",     label: "Active" },
+    { value: "awaiting",   label: "⏳ Awaiting Rider" + (awaitingCount ? " (" + awaitingCount + ")" : "") },
+    { value: "delivered",  label: "Delivered" },
+    { value: "cancelled",  label: "Cancelled" },
   ]);
   let list = cache.orders;
   if (activeFilter === "active")    list = list.filter(function(o){ return !["delivered","cancelled"].includes(o.status); });
   if (activeFilter === "delivered") list = list.filter(function(o){ return o.status === "delivered"; });
   if (activeFilter === "cancelled") list = list.filter(function(o){ return o.status === "cancelled"; });
+  if (activeFilter === "awaiting") {
+    list = list.filter(function(o){
+      if (!["accepted", "vendor_accepted"].includes(o.status)) return false;
+      const pickup = (o.trips || []).find(function(t){ return t.type === "pickup"; });
+      return pickup && !pickup.riderId;
+    });
+  }
 
   if (!list.length) {
-    $("content").innerHTML = '<div class="empty">No orders match this filter.</div>';
+    $("content").innerHTML = '<div class="empty">' + (activeFilter === "awaiting" ? "🎉 No orders awaiting rider." : "No orders match this filter.") + '</div>';
     return;
   }
   $("content").innerHTML = list.slice(0, 50).map(function (o) {
     const cust = (o.customer && o.customer.name) || "Customer";
     const shop = (o.shop && o.shop.name) || "Shop";
     const cancelled = o.status === "cancelled";
+
+    // Awaiting-rider banner — shown when vendor accepted but pickup trip has no rider
+    let awaitBanner = "";
+    if (["accepted", "vendor_accepted"].includes(o.status)) {
+      const pickup = (o.trips || []).find(function(t){ return t.type === "pickup"; });
+      if (pickup && !pickup.riderId) {
+        const minsAgo = o.acceptedAt
+          ? Math.round((Date.now() - new Date(o.acceptedAt).getTime()) / 60000)
+          : 0;
+        const tooLong = minsAgo >= 10;
+        awaitBanner =
+          '<div style="background:' + (tooLong ? "#fef3c7" : "#dbeafe") + ';border-left:3px solid ' + (tooLong ? "#f59e0b" : "#3b82f6") + ';padding:8px 10px;margin:8px 0;border-radius:6px;font-size:12px;color:' + (tooLong ? "#92400e" : "#1e40af") + '">' +
+            '⏳ <b>Awaiting rider</b> · ' + (o.acceptedAt ? minsAgo + ' min since vendor accepted' : 'just accepted') +
+            ' <button class="btn" style="margin-left:8px;padding:2px 8px;font-size:11px;background:#fff;color:inherit;border:1px solid currentColor" onclick="openRiderDiagnosis(\'' + o._id + '\')">Why?</button>' +
+          '</div>';
+      }
+    }
+
     return (
       '<div class="card" data-order-id="' + o._id + '">' +
         '<div class="card-hdr">' +
@@ -830,6 +863,7 @@ function renderOrders() {
           '</div>' +
           '<div><span class="pill ' + escHtml(o.status || "pending") + '">' + escHtml(o.status || "—") + '</span></div>' +
         '</div>' +
+        awaitBanner +
         '<div class="actions one">' +
           '<button class="btn btn-info" onclick="openTimeline(\'' + o._id + '\')">📋 View Timeline</button>' +
         '</div>' +
@@ -1551,6 +1585,79 @@ function closeModal() {
   modalContext = null;
 }
 function closeModalIfBg(e) { if (e.target === $("modalBg")) closeModal(); }
+
+// ── RIDER ASSIGNMENT DIAGNOSIS MODAL ─────────────────────────────────────────
+// Shows admin EXACTLY why a pickup rider hasn't been assigned: slot eligibility,
+// available riders in area, and any blockers. Calls the backend's mirrored
+// version of the assignRiders cron logic.
+async function openRiderDiagnosis(orderId) {
+  modalContext = { orderId: orderId };
+  openModal("🔍 Why no rider?", '<div class="loading">Diagnosing…</div>', "");
+  try {
+    const r = await api("/api/admin/orders/" + orderId + "/rider-diagnosis");
+    if (!r.success) throw new Error(r.message || "Diagnosis failed");
+
+    let html = "";
+
+    // Already-assigned case
+    if (r.pickupRiderAssigned) {
+      html += '<div class="ok" style="margin-bottom:12px">✅ ' + escHtml(r.message || "Rider assigned") + '</div>';
+      if (r.rider) {
+        html += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px"><b>🛵 ' + escHtml(r.rider.name || "Rider") + '</b>' +
+                (r.rider.phone ? '<br>📞 ' + escHtml(r.rider.phone) : '') +
+                (r.rider.area || r.rider.currentArea ? '<br>📍 ' + escHtml(r.rider.currentArea || r.rider.area) : '') +
+                '</div>';
+      }
+      openModal("🔍 Rider assigned", html, "");
+      return;
+    }
+
+    // Not assigned — show diagnosis
+    html += '<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px;margin-bottom:12px;color:#92400e">' +
+              '<b>⏳ Awaiting rider assignment</b>' +
+              (r.minutesSinceAccepted != null ? '<div class="small" style="margin-top:4px">Vendor accepted ' + r.minutesSinceAccepted + ' min ago</div>' : '') +
+            '</div>';
+
+    html += '<h3 style="margin:0 0 8px;font-size:14px">📋 Reason</h3>';
+    html += '<div style="padding:8px 12px;background:#f8fafc;border-radius:6px;margin-bottom:14px">' + escHtml(r.reason || "—") + '</div>';
+
+    // Available rider stats
+    html += '<h3 style="margin:14px 0 8px;font-size:14px">🛵 Available riders</h3>';
+    html += '<div class="row" style="display:flex;gap:8px"><div style="flex:1;background:#eff6ff;padding:10px;border-radius:6px;text-align:center"><div style="font-size:22px;font-weight:700;color:#1e40af">' + (r.availableRiders ? r.availableRiders.totalOnDuty : 0) + '</div><div class="small">On-duty (any area)</div></div>';
+    html += '<div style="flex:1;background:#f0fdf4;padding:10px;border-radius:6px;text-align:center"><div style="font-size:22px;font-weight:700;color:#15803d">' + (r.availableRiders ? r.availableRiders.inArea : 0) + '</div><div class="small">In \'' + escHtml(r.pickupArea || "—") + '\'</div></div></div>';
+
+    // Slot info (if normal order)
+    if (r.slotEligibleAt) {
+      const eligDate = new Date(r.slotEligibleAt);
+      html += '<h3 style="margin:14px 0 8px;font-size:14px">⏰ Will become eligible</h3>';
+      html += '<div style="padding:8px 12px;background:#f0f9ff;border-radius:6px;color:#0369a1">' +
+                '<b>' + eligDate.toLocaleString("en-IN", { weekday: "short", hour: "2-digit", minute: "2-digit" }) + '</b>' +
+              '</div>';
+    }
+
+    // Blockers
+    if (r.blockers && r.blockers.length) {
+      html += '<h3 style="margin:14px 0 8px;font-size:14px">🚧 Blockers</h3>';
+      r.blockers.forEach(function(b){
+        html += '<div style="background:#fef2f2;border-left:3px solid #ef4444;padding:8px 12px;margin-bottom:6px;border-radius:0 6px 6px 0;color:#991b1b;font-size:13px">' +
+                  '<b>' + escHtml((b.type || "").replace(/_/g, " ")) + '</b><br>' +
+                  '<span style="font-size:12px">' + escHtml(b.detail || "") + '</span>' +
+                '</div>';
+      });
+    }
+
+    // Footer actions: Force Reassign (manual override) or Force Cancel
+    let footer =
+      '<div class="actions">' +
+        '<button class="btn btn-warn" onclick="forceReassignOrder(\'' + orderId + '\', this)">🔄 Force Reassign</button>' +
+        '<button class="btn btn-reject" onclick="forceCancelOrder(\'' + orderId + '\', this)">❌ Force Cancel</button>' +
+      '</div>';
+
+    openModal("🔍 Why no rider?", html, footer);
+  } catch (e) {
+    $("modalBody").innerHTML = '<div class="err">' + escHtml(e.message || "Failed to diagnose") + '</div>';
+  }
+}
 
 async function openTimeline(orderId) {
   modalContext = { orderId: orderId };
