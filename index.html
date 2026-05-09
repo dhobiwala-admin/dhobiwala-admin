@@ -257,6 +257,7 @@
     <div class="tab" data-tab="ratings" onclick="switchTab('ratings')">⭐ Ratings</div>
     <div class="tab" data-tab="analytics" onclick="switchTab('analytics')">📈 Analytics</div>
     <div class="tab" data-tab="rankings" onclick="switchTab('rankings')">🏆 Top</div>
+    <div class="tab settle-tab" data-tab="settlements" onclick="switchTab('settlements')">💰 Settlements <span id="settleBadge" class="badge" style="display:none">0</span></div>
   </div>
 
   <div id="filterBar" class="filters"></div>
@@ -314,7 +315,7 @@ async function api(path, opts) {
   const res = await fetch(API + path, opts);
   let json = null;
   try { json = await res.json(); } catch (e) { json = { success: false, message: "Bad response" }; }
-  if (res.status === 401 || res.status === 403) {
+  if (res.status === 401) {
     localStorage.removeItem("admin_token");
     token = "";
     showLogin();
@@ -399,6 +400,7 @@ function showDashboard() {
   loadAll();
   setupSocket();
   setupPolling();
+  refreshSettlementBadge();   // initial pending-deposits badge
 }
 
 // ═══════════════════════════════ SOCKET.IO + POLLING ═══════════════════════════════
@@ -426,6 +428,18 @@ function setupSocket() {
   socket.on("rider_no_show_final_alert",   function (p) { onAlertEvent(p, "🚨 Final alert: " + (p.orderNumber || ""), "Rider may be ghosting", "critical"); });
   socket.on("rider_no_show_reassigned",    function (p) { onAlertEvent(p, "🔄 Reassigned: " + (p.orderNumber || ""), (p.fromRiderId ? "From rider " : "") + (p.toRiderName || ""), "warning"); });
   socket.on("rider_no_show_reassign_failed", function (p) { onAlertEvent(p, "⚠️ Reassign failed: " + (p.orderNumber || ""), "No replacement available", "critical"); });
+
+  // Settlement events — refresh badge + view if settlements tab is active
+  socket.on("rider_deposit_request", function (p) {
+    if (!p) return;
+    toast("📤 " + (p.riderName || "Rider") + " requested deposit of ₹" + p.amount, "ok");
+    if (activeTab === "settlements") renderSettlements();
+    else refreshSettlementBadge();
+  });
+  socket.on("rider_deposit_confirmed", function () {
+    if (activeTab === "settlements") renderSettlements();
+    else refreshSettlementBadge();
+  });
 
   // Order events
   socket.on("order_cancelled", function (p) { onAlertEvent(p, "❌ Order cancelled: " + (p.orderNumber || ""), p.reason || "", "critical"); });
@@ -471,10 +485,12 @@ function setupPolling() {
   pollTimer = setInterval(function () {
     if ($("dashboard").style.display === "none") return;
     refreshAlerts();
+    refreshSettlementBadge();
     if (activeTab === "orders")    loadOrders().then(renderTab);
     if (activeTab === "riders")    loadRiders().then(renderTab);
     if (activeTab === "vendors")   loadVendors().then(renderTab);
     if (activeTab === "ratings")   loadRatings().then(renderTab);
+    if (activeTab === "settlements") renderSettlements();
   }, 30000);
 }
 
@@ -674,6 +690,7 @@ function renderTab() {
   if (activeTab === "ratings")   return renderRatings();
   if (activeTab === "analytics") return renderAnalytics();
   if (activeTab === "rankings")  return renderRankings();
+  if (activeTab === "settlements") return renderSettlements();
 }
 
 function setFilters(filterDefs) {
@@ -1111,8 +1128,10 @@ function renderAnalytics() {
     '<h4>💰 Money flow</h4>' +
     '<div class="top-list">' +
       '<div class="row"><span>Total revenue (delivered)</span><b>' + rupees(a.totalRevenue) + '</b></div>' +
-      '<div class="row"><span>Vendor payout (85%)</span><b>' + rupees(a.vendorPayout) + '</b></div>' +
-      '<div class="row"><span>Platform earnings (15%)</span><b>' + rupees(a.platformEarnings) + '</b></div>' +
+      '<div class="row"><span>&nbsp;&nbsp;↳ Item sales (subtotal)</span><span class="small" style="color:#666">' + rupees(a.totalSubtotal || 0) + '</span></div>' +
+      '<div class="row"><span>&nbsp;&nbsp;↳ Quick service charges</span><span class="small" style="color:#666">' + rupees(a.totalTripFees || 0) + '</span></div>' +
+      '<div class="row"><span>Vendor payout (80% of items)</span><b>' + rupees(a.vendorPayout) + '</b></div>' +
+      '<div class="row"><span>Platform commission (20%)</span><b>' + rupees(a.platformEarnings) + '</b></div>' +
       '<div class="row"><span>Cashback given to customers</span><b style="color:#c2410c">−' + rupees(a.totalCashbackGiven) + '</b></div>' +
       '<div class="row"><span>Rider payout (admin-paid)</span><b style="color:#c2410c">−' + rupees(a.totalRiderPayout) + '</b></div>' +
     '</div>' +
@@ -1205,7 +1224,322 @@ function renderRankings() {
   $("content").innerHTML = html;
 }
 
-// ═══════════════════════════════ MODAL: TIMELINE ════════════════════════════
+// ═══════════════════════════════ SETTLEMENTS ════════════════════════════════
+// Cash & earnings settlement management. Three sub-views:
+//   1. Pending — deposit requests awaiting admin confirmation
+//   2. Outstanding — riders currently holding cash
+//   3. Owed — riders awaiting earnings payout
+//   4. History — full ledger of all movements
+
+let settlementSubview = "pending";
+
+async function renderSettlements() {
+  setFilters([]);
+  $("content").innerHTML = '<div class="loading">Loading settlements…</div>';
+
+  // Fetch all data we need for badges + active subview
+  let pendingData = { pending: [] };
+  let outstanding = { riders: [], totalOutstanding: 0 };
+  let owed        = { riders: [], totalOwed: 0 };
+  try {
+    const [pRes, oRes, eRes] = await Promise.all([
+      api("/api/admin/settlements/pending"),
+      api("/api/admin/settlements/outstanding-cash"),
+      api("/api/admin/settlements/earnings-owed"),
+    ]);
+    if (pRes.success) pendingData = pRes;
+    if (oRes.success) outstanding = oRes;
+    if (eRes.success) owed        = eRes;
+  } catch (e) {
+    $("content").innerHTML = '<div class="empty">Failed to load: ' + escHtml(e.message) + '</div>';
+    return;
+  }
+
+  const pendCount = pendingData.pending.length;
+  const sub = settlementSubview;
+
+  // Sub-tabs row
+  let html = '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">' +
+    pillBtn("pending",     "📤 Pending",      sub, pendCount) +
+    pillBtn("outstanding", "💵 Cash Out",     sub, outstanding.riders.length, "₹" + (outstanding.totalOutstanding||0)) +
+    pillBtn("owed",        "💰 Earnings Owed",sub, owed.riders.length,        "₹" + (owed.totalOwed||0)) +
+    pillBtn("vendors",     "🏪 Vendors",      sub, 0,                          "") +
+    pillBtn("history",     "📒 History",      sub) +
+  '</div>';
+
+  if (sub === "pending") {
+    if (!pendCount) {
+      html += '<div class="empty" style="text-align:center;padding:30px;color:#94a3b8">No pending deposit requests.</div>';
+    } else {
+      html += '<div style="display:grid;gap:10px">';
+      pendingData.pending.forEach(function(p){
+        const r = p.rider || {};
+        const dt = new Date(p.createdAt).toLocaleString("en-IN", { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+        html += '<div style="background:#fff;border-radius:14px;border:1px solid #fde68a;padding:14px 16px">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+                    '<div>' +
+                      '<div style="font-weight:700;font-size:15px">🛵 ' + escHtml(r.name || "Rider") + '</div>' +
+                      '<div style="color:#64748b;font-size:12px">' + escHtml(r.phone || "") + ' · ' + escHtml(r.vehicle || "") + '</div>' +
+                      '<div style="color:#94a3b8;font-size:11px;margin-top:2px">Requested ' + dt + '</div>' +
+                      (p.note ? '<div style="color:#475569;font-size:12px;margin-top:4px">📝 ' + escHtml(p.note) + '</div>' : '') +
+                    '</div>' +
+                    '<div style="text-align:right">' +
+                      '<div style="font-size:11px;color:#9a3412;text-transform:uppercase;font-weight:700">Requesting</div>' +
+                      '<div style="font-size:24px;font-weight:800;color:#9a3412">₹' + p.amount + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  '<div style="display:flex;gap:8px;margin-top:12px">' +
+                    '<button onclick="confirmDeposit(\'' + p._id + '\', ' + p.amount + ')" style="flex:1;background:#16a34a;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;cursor:pointer">✓ Confirm Received</button>' +
+                    '<button onclick="rejectDeposit(\'' + p._id + '\')" style="flex:1;background:#fee2e2;color:#991b1b;border:none;padding:10px;border-radius:8px;font-weight:700;cursor:pointer">✕ Reject</button>' +
+                  '</div>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  if (sub === "outstanding") {
+    html += '<div style="margin-bottom:10px;color:#475569;font-size:13px">Riders currently holding cash (not yet deposited):</div>';
+    if (!outstanding.riders.length) {
+      html += '<div class="empty" style="text-align:center;padding:30px;color:#94a3b8">All caught up — no rider is holding cash.</div>';
+    } else {
+      html += '<div style="display:grid;gap:10px">';
+      outstanding.riders.forEach(function(r){
+        html += '<div style="background:#fff;border-radius:14px;border:1px solid #f1f5f9;padding:14px 16px;display:flex;justify-content:space-between;align-items:center">' +
+                  '<div>' +
+                    '<div style="font-weight:700;font-size:15px">🛵 ' + escHtml(r.name) + '</div>' +
+                    '<div style="color:#64748b;font-size:12px">' + escHtml(r.phone) + '</div>' +
+                  '</div>' +
+                  '<div style="text-align:right">' +
+                    '<div style="font-size:11px;color:#9a3412;text-transform:uppercase;font-weight:700">Cash on Hand</div>' +
+                    '<div style="font-size:22px;font-weight:800;color:#9a3412">₹' + (r.cashOnHand||0) + '</div>' +
+                  '</div>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  if (sub === "owed") {
+    html += '<div style="margin-bottom:10px;color:#475569;font-size:13px">Riders awaiting earnings payout from admin:</div>';
+    if (!owed.riders.length) {
+      html += '<div class="empty" style="text-align:center;padding:30px;color:#94a3b8">No earnings pending.</div>';
+    } else {
+      html += '<div style="display:grid;gap:10px">';
+      owed.riders.forEach(function(r){
+        html += '<div style="background:#fff;border-radius:14px;border:1px solid #bbf7d0;padding:14px 16px">' +
+                  '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+                    '<div>' +
+                      '<div style="font-weight:700;font-size:15px">🛵 ' + escHtml(r.name) + '</div>' +
+                      '<div style="color:#64748b;font-size:12px">' + escHtml(r.phone) + ' · ' + (r.totalTrips||0) + ' total trips</div>' +
+                    '</div>' +
+                    '<div style="text-align:right">' +
+                      '<div style="font-size:11px;color:#14532d;text-transform:uppercase;font-weight:700">Earnings Owed</div>' +
+                      '<div style="font-size:22px;font-weight:800;color:#14532d">₹' + (r.earningsOwed||0) + '</div>' +
+                    '</div>' +
+                  '</div>' +
+                  '<button onclick="payOutEarnings(\'' + r._id + '\', \'' + escHtml(r.name) + '\', ' + (r.earningsOwed||0) + ')" style="margin-top:10px;width:100%;background:#16a34a;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;cursor:pointer">💰 Mark Paid</button>' +
+                '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  if (sub === "vendors") {
+    html += '<div id="vendorsContent" style="margin-top:6px"><div class="loading">Loading vendor earnings…</div></div>';
+  }
+
+  if (sub === "history") {
+    html += '<div id="historyContent" style="margin-top:6px"><div class="loading">Loading history…</div></div>';
+  }
+
+  $("content").innerHTML = html;
+
+  // Update badge on tab
+  if (pendCount > 0) {
+    $("settleBadge").textContent = pendCount;
+    $("settleBadge").style.display = "inline-block";
+  } else {
+    $("settleBadge").style.display = "none";
+  }
+
+  if (sub === "history") loadSettlementHistory();
+  if (sub === "vendors") loadVendorSettlements();
+}
+
+function pillBtn(key, label, current, count, extra) {
+  const active = (current === key);
+  const bg = active ? "#1a1a1a" : "#fff";
+  const fg = active ? "#fff"     : "#1a1a1a";
+  const border = active ? "transparent" : "#e2e8f0";
+  let badge = "";
+  if (count !== undefined && count > 0) {
+    badge = ' <span style="background:' + (active?"rgba(255,255,255,0.2)":"#fee2e2") + ';color:' + (active?"#fff":"#991b1b") + ';padding:1px 6px;border-radius:8px;font-size:10px;font-weight:800;margin-left:4px">' + count + '</span>';
+  }
+  if (extra)  badge += ' <span style="opacity:0.7;font-size:11px;margin-left:4px">' + extra + '</span>';
+  return '<button onclick="settlementSubview=\'' + key + '\'; renderSettlements()" style="background:' + bg + ';color:' + fg + ';border:1px solid ' + border + ';padding:8px 14px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer">' + label + badge + '</button>';
+}
+
+async function loadSettlementHistory() {
+  try {
+    const r = await api("/api/admin/settlements/history?limit=100");
+    if (!r.success) throw new Error(r.message);
+    if (!r.entries.length) {
+      $("historyContent").innerHTML = '<div class="empty" style="text-align:center;padding:30px;color:#94a3b8">No history yet.</div>';
+      return;
+    }
+    const TYPE_META = {
+      cash_collected:         { icon: "💵", color: "#9a3412", label: "Cash collected", sign: "+" },
+      earnings_credited:      { icon: "💰", color: "#14532d", label: "Earnings credited", sign: "+" },
+      cash_deposit_request:   { icon: "📤", color: "#1d4ed8", label: "Deposit requested", sign: "" },
+      cash_deposit_confirmed: { icon: "✅", color: "#0a7d3a", label: "Deposit confirmed", sign: "−" },
+      cash_deposit_rejected:  { icon: "❌", color: "#dc2626", label: "Deposit rejected", sign: "" },
+      earnings_paid:          { icon: "🏦", color: "#7c3aed", label: "Earnings paid out", sign: "−" },
+      adjustment:             { icon: "⚙️", color: "#64748b", label: "Adjustment", sign: "" },
+    };
+    let html = '<div style="background:#fff;border-radius:14px;border:1px solid #f1f5f9;overflow:hidden">';
+    r.entries.forEach(function(e){
+      const m = TYPE_META[e.type] || { icon: "·", color: "#64748b", label: e.type, sign: "" };
+      const dt = new Date(e.createdAt).toLocaleString("en-IN", { day:"numeric", month:"short", hour:"numeric", minute:"2-digit" });
+      const rider = e.rider || {};
+      const statusBadge = e.status === "pending"  ? ' <span style="background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700">PENDING</span>'
+                        : e.status === "rejected" ? ' <span style="background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:6px;font-size:10px;font-weight:700">REJECTED</span>'
+                        : '';
+      html += '<div style="border-bottom:1px solid #f8fafc;padding:12px 16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+                  '<div>' +
+                    '<div style="font-weight:600;color:' + m.color + ';font-size:13px">' + m.icon + ' ' + m.label + statusBadge + '</div>' +
+                    '<div style="font-size:12px;color:#475569;margin-top:2px">' + escHtml(rider.name || "—") + (e.orderNumber ? ' · #' + escHtml(e.orderNumber) : '') + '</div>' +
+                    (e.note ? '<div style="color:#94a3b8;font-size:11px;margin-top:2px">' + escHtml(e.note) + '</div>' : '') +
+                    '<div style="color:#94a3b8;font-size:10px;margin-top:2px">' + dt + '</div>' +
+                  '</div>' +
+                  '<div style="font-weight:700;color:' + m.color + ';font-size:15px">' + m.sign + '₹' + e.amount + '</div>' +
+                '</div>' +
+              '</div>';
+    });
+    html += '</div>';
+    $("historyContent").innerHTML = html;
+  } catch (e) {
+    $("historyContent").innerHTML = '<div class="empty">Failed to load: ' + escHtml(e.message) + '</div>';
+  }
+}
+
+async function confirmDeposit(settlementId, requestedAmt) {
+  const actual = prompt("Confirm cash received from rider.\nAmount (₹):", requestedAmt);
+  if (actual === null) return;
+  const amt = Number(actual);
+  if (!amt || amt < 0) return alert("Invalid amount");
+  try {
+    const r = await api("/api/admin/settlements/" + settlementId + "/confirm", {
+      method: "POST",
+      body: JSON.stringify({ actualAmount: amt }),
+    });
+    if (!r.success) throw new Error(r.message);
+    alert(r.message);
+    renderSettlements();
+  } catch (e) { alert(e.message); }
+}
+
+async function rejectDeposit(settlementId) {
+  const reason = prompt("Reason for rejection (optional):", "");
+  if (reason === null) return;
+  try {
+    const r = await api("/api/admin/settlements/" + settlementId + "/reject", {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    });
+    if (!r.success) throw new Error(r.message);
+    renderSettlements();
+  } catch (e) { alert(e.message); }
+}
+
+async function payOutEarnings(riderId, riderName, owedAmt) {
+  const amt = prompt("Pay earnings to " + riderName + "\nAmount (₹), max ₹" + owedAmt + ":", owedAmt);
+  if (amt === null) return;
+  const n = Number(amt);
+  if (!n || n <= 0) return alert("Invalid amount");
+  try {
+    const r = await api("/api/admin/settlements/riders/" + riderId + "/pay-earnings", {
+      method: "POST",
+      body: JSON.stringify({ amount: n }),
+    });
+    if (!r.success) throw new Error(r.message);
+    alert(r.message);
+    renderSettlements();
+  } catch (e) { alert(e.message); }
+}
+
+// ── VENDOR SETTLEMENTS ────────────────────────────────────────────────────
+async function loadVendorSettlements() {
+  try {
+    const r = await api("/api/admin/settlements/vendors/owed");
+    if (!r.success) throw new Error(r.message);
+
+    if (!r.shops.length) {
+      $("vendorsContent").innerHTML = '<div class="empty" style="text-align:center;padding:30px;color:#94a3b8">No vendors have unpaid earnings.</div>';
+      return;
+    }
+
+    let html = '<div style="margin-bottom:10px;color:#475569;font-size:13px">Vendors awaiting cash settlement (paid weekly by admin):' +
+                 '<span style="float:right;font-weight:700;color:#14532d">Total: ₹' + (r.totalOwed||0) + '</span></div>' +
+               '<div style="display:grid;gap:10px">';
+
+    r.shops.forEach(function(s){
+      const owner = s.owner || {};
+      const lastSettled = s.lastSettlementAt ? new Date(s.lastSettlementAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—";
+      html += '<div style="background:#fff;border-radius:14px;border:1px solid #bbf7d0;padding:14px 16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+                  '<div>' +
+                    '<div style="font-weight:700;font-size:15px">🏪 ' + escHtml(s.name) + '</div>' +
+                    '<div style="color:#64748b;font-size:12px">' + escHtml(owner.name || "—") + (owner.phone ? ' · ' + escHtml(owner.phone) : '') + '</div>' +
+                    '<div style="color:#64748b;font-size:11px;margin-top:2px">' + (s.totalOrdersCompleted||0) + ' total orders · last settled ' + lastSettled + '</div>' +
+                  '</div>' +
+                  '<div style="text-align:right">' +
+                    '<div style="font-size:11px;color:#14532d;text-transform:uppercase;font-weight:700">Earnings Owed</div>' +
+                    '<div style="font-size:22px;font-weight:800;color:#14532d">₹' + (s.earningsOwed||0) + '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<button onclick="payOutVendor(\'' + s._id + '\', \'' + escHtml(s.name).replace(/'/g, "\\'") + '\', ' + (s.earningsOwed||0) + ')" style="margin-top:10px;width:100%;background:#16a34a;color:#fff;border:none;padding:10px;border-radius:8px;font-weight:700;cursor:pointer">💰 Mark Paid (Cash)</button>' +
+              '</div>';
+    });
+    html += '</div>';
+    $("vendorsContent").innerHTML = html;
+  } catch (e) {
+    $("vendorsContent").innerHTML = '<div class="empty">Failed to load: ' + escHtml(e.message) + '</div>';
+  }
+}
+
+async function payOutVendor(shopId, shopName, owedAmt) {
+  const amt = prompt("Settle earnings with " + shopName + " (cash payment)\nAmount (₹), max ₹" + owedAmt + ":", owedAmt);
+  if (amt === null) return;
+  const n = Number(amt);
+  if (!n || n <= 0) return alert("Invalid amount");
+  const note = prompt("Note (optional, e.g. 'Weekly settlement May 1-7'):", "") || "";
+  try {
+    const r = await api("/api/admin/settlements/vendors/" + shopId + "/pay-earnings", {
+      method: "POST",
+      body: JSON.stringify({ amount: n, note }),
+    });
+    if (!r.success) throw new Error(r.message);
+    alert(r.message);
+    renderSettlements();
+  } catch (e) { alert(e.message); }
+}
+
+// Refresh just the pending-deposits badge (used when admin is on a different tab)
+async function refreshSettlementBadge() {
+  try {
+    const r = await api("/api/admin/settlements/pending");
+    if (!r.success) return;
+    const c = (r.pending || []).length;
+    const b = $("settleBadge");
+    if (!b) return;
+    if (c > 0) { b.textContent = c; b.style.display = "inline-block"; }
+    else        { b.style.display = "none"; }
+  } catch (_) {}
+}
+
+
 function openModal(title, bodyHtml, footerHtml) {
   $("modalTitle").textContent = title;
   $("modalBody").innerHTML = bodyHtml || '<div class="loading">Loading…</div>';
