@@ -288,6 +288,14 @@ const API = "https://dhobiwala-backend-dev.onrender.com";
 let token = localStorage.getItem("admin_token") || "";
 let activeTab = "vendors";
 let activeFilter = "all";
+
+// ═════════ ORDER SEARCH & DATE FILTER STATE ═════════
+// Feature A: search by order number prefix (e.g. "SW260510" or "SW2605100001")
+// Feature B: date range filter for old orders (default 30 days, IST-aware)
+let orderSearchQuery = "";       // current search text
+let orderSearchDebounce = null;  // setTimeout handle for debouncing
+let orderDateFrom = "";          // YYYY-MM-DD
+let orderDateTo   = "";          // YYYY-MM-DD
 let cache = { vendors: [], riders: [], orders: [], customers: [], stuck: [], escalations: [], ratings: [], ratingStats: null, analytics: null, rankings: null };
 let analyticsPeriod = "daily";
 let rankingsPeriod  = "weekly";
@@ -599,9 +607,52 @@ async function loadRiders() {
 
 async function loadOrders() {
   try {
-    const r = await api("/api/admin/orders");
+    // Search mode: hits /api/admin/orders/search if query is non-empty.
+    // Date filter mode: hits /api/admin/orders?from=&to= if either picker is set.
+    // Default mode: just GET /api/admin/orders (200 most recent).
+    let url;
+    if (orderSearchQuery && orderSearchQuery.length >= 3) {
+      url = "/api/admin/orders/search?q=" + encodeURIComponent(orderSearchQuery);
+    } else if (orderDateFrom || orderDateTo) {
+      const params = [];
+      if (orderDateFrom) params.push("from=" + encodeURIComponent(orderDateFrom));
+      if (orderDateTo)   params.push("to="   + encodeURIComponent(orderDateTo));
+      url = "/api/admin/orders?" + params.join("&");
+    } else {
+      url = "/api/admin/orders";
+    }
+    const r = await api(url);
     if (r.success) cache.orders = r.orders || [];
   } catch (e) { console.error("loadOrders", e); }
+}
+
+// ─── ORDER SEARCH + DATE FILTER HANDLERS ────────────────────────────────────
+// Debounce input → wait 300ms after user stops typing before firing the API
+// call. Avoids hammering the backend on every keystroke.
+function onOrderSearchInput(value) {
+  orderSearchQuery = String(value || "").trim();
+  if (orderSearchDebounce) clearTimeout(orderSearchDebounce);
+  orderSearchDebounce = setTimeout(function() {
+    loadOrders().then(renderOrders);
+  }, 300);
+}
+
+function clearOrderSearch() {
+  orderSearchQuery = "";
+  if (orderSearchDebounce) clearTimeout(orderSearchDebounce);
+  loadOrders().then(renderOrders);
+}
+
+function onOrderDateChange(which, value) {
+  if (which === "from") orderDateFrom = value || "";
+  if (which === "to")   orderDateTo   = value || "";
+  loadOrders().then(renderOrders);
+}
+
+function clearOrderDates() {
+  orderDateFrom = "";
+  orderDateTo   = "";
+  loadOrders().then(renderOrders);
 }
 
 async function loadCustomers() {
@@ -810,6 +861,33 @@ function renderOrders() {
     { value: "delivered",  label: "Delivered" },
     { value: "cancelled",  label: "Cancelled" },
   ]);
+
+  // ── Search + Date filter toolbar (Features A and B) ─────────────────────
+  // Sticky at the top of the orders content. Search dominates: when active,
+  // status filters and date range are bypassed (backend returns matching
+  // orders regardless of status). Date range applies when search is empty.
+  const searchActive = orderSearchQuery && orderSearchQuery.length >= 3;
+  const dateActive   = !!(orderDateFrom || orderDateTo);
+  const toolbarHtml =
+    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:10px;margin-bottom:14px">' +
+      '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">' +
+        '<input id="orderSearchBox" type="search" placeholder="🔍 Search by order number (e.g. SW260510)" ' +
+          'value="' + escHtml(orderSearchQuery) + '" oninput="onOrderSearchInput(this.value)" ' +
+          'style="flex:1;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px">' +
+        (searchActive ? '<button onclick="clearOrderSearch()" style="padding:6px 10px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">Clear</button>' : '') +
+      '</div>' +
+      (searchActive
+        ? '<div style="font-size:11px;color:#475569">Showing search results — status filters and date range ignored.</div>'
+        : '<div style="display:flex;gap:8px;align-items:center;font-size:12px;color:#475569">' +
+            '<span>Date range:</span>' +
+            '<input id="orderDateFrom" type="date" value="' + escHtml(orderDateFrom) + '" onchange="onOrderDateChange(\'from\', this.value)" style="padding:4px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:12px">' +
+            '<span>to</span>' +
+            '<input id="orderDateTo" type="date" value="' + escHtml(orderDateTo) + '" onchange="onOrderDateChange(\'to\', this.value)" style="padding:4px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:12px">' +
+            (dateActive ? '<button onclick="clearOrderDates()" style="padding:4px 8px;background:#fff;color:#475569;border:1px solid #cbd5e1;border-radius:4px;font-size:11px;cursor:pointer">Clear</button>' : '') +
+          '</div>'
+      ) +
+    '</div>';
+
   let list = cache.orders;
   if (activeFilter === "active")    list = list.filter(function(o){ return !["delivered","cancelled"].includes(o.status); });
   if (activeFilter === "delivered") list = list.filter(function(o){ return o.status === "delivered"; });
@@ -823,10 +901,10 @@ function renderOrders() {
   }
 
   if (!list.length) {
-    $("content").innerHTML = '<div class="empty">' + (activeFilter === "awaiting" ? "🎉 No orders awaiting rider." : "No orders match this filter.") + '</div>';
+    $("content").innerHTML = toolbarHtml + '<div class="empty">' + (activeFilter === "awaiting" ? "🎉 No orders awaiting rider." : "No orders match this filter.") + '</div>';
     return;
   }
-  $("content").innerHTML = list.slice(0, 50).map(function (o) {
+  $("content").innerHTML = toolbarHtml + list.slice(0, 50).map(function (o) {
     const cust = (o.customer && o.customer.name) || "Customer";
     const shop = (o.shop && o.shop.name) || "Shop";
     const cancelled = o.status === "cancelled";
@@ -870,6 +948,19 @@ function renderOrders() {
       '</div>'
     );
   }).join("");
+
+  // Restore focus + cursor to search box if user was typing. Without this,
+  // every keystroke would blur the input because renderOrders rewrites
+  // #content (which contains the input). Only restore when there's a query —
+  // avoid stealing focus when user just opens the Orders tab.
+  if (orderSearchQuery) {
+    const searchBox = $("orderSearchBox");
+    if (searchBox) {
+      searchBox.focus();
+      const len = searchBox.value.length;
+      searchBox.setSelectionRange(len, len);
+    }
+  }
 }
 
 // ── VENDORS TAB ───────────────────────────────────────────────────────────
