@@ -1258,7 +1258,15 @@ function renderAnalytics() {
       '<div class="row"><span>Vendor payout (80% of items)</span><b>' + rupees(a.vendorPayout) + '</b></div>' +
       '<div class="row"><span>Platform commission (20%)</span><b>' + rupees(a.platformEarnings) + '</b></div>' +
       '<div class="row"><span>Cashback given to customers</span><b style="color:#c2410c">−' + rupees(a.totalCashbackGiven) + '</b></div>' +
-      '<div class="row"><span>Rider payout (admin-paid)</span><b style="color:#c2410c">−' + rupees(a.totalRiderPayout) + '</b></div>' +
+      // Rider earnings reconciliation — three lines so admin can match what
+      // the rider sees in their app vs admin's actual out-of-pocket cost:
+      //   1. Customer service charges that flowed through admin to riders
+      //   2. Admin's out-of-pocket payout on Normal orders
+      //   3. Total rider earnings (1+2) — this matches the rider app's tile
+      '<div class="row"><span style="color:#475569;font-weight:600;font-size:13px;margin-top:6px">Rider earnings breakdown</span></div>' +
+      '<div class="row"><span>&nbsp;&nbsp;↳ Customer fees → riders</span><span class="small" style="color:#666">' + rupees(a.tripFeesPaidToRiders || 0) + '</span></div>' +
+      '<div class="row"><span>&nbsp;&nbsp;↳ Admin out-of-pocket (Normal)</span><b style="color:#c2410c">−' + rupees(a.totalRiderPayout || 0) + '</b></div>' +
+      '<div class="row" style="border-top:1px dashed #e2e8f0;margin-top:4px;padding-top:4px"><span>&nbsp;&nbsp;Total rider earnings</span><b>' + rupees(a.totalRiderEarnings || 0) + '</b></div>' +
     '</div>' +
   '</div>';
 
